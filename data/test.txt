@@ -1,0 +1,91 @@
+Groww Access Token  : Expires : 6 am next day in the morning
+eyJraWQiOiJaTUtjVXciLCJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3ODQwNzU0MDAsImlhdCI6MTc4NDA0NDQzNywibmJmIjoxNzg0MDQ0NDM3LCJzdWIiOiJ7XCJ0b2tlblJlZklkXCI6XCI4OTRlMTRkYi01MzlhLTQ0NmYtYWE4NS03MzBiYmVjOWJiNDlcIixcInZlbmRvckludGVncmF0aW9uS2V5XCI6XCJlMzFmZjIzYjA4NmI0MDZjODg3NGIyZjZkODQ5NTMxM1wiLFwidXNlckFjY291bnRJZFwiOlwiMjNmMDcwMTMtNDNiOC00YzE2LTk0OTEtMmVmODVmYWMzZWVmXCIsXCJkZXZpY2VJZFwiOlwiMzVjY2NjMWYtMWU2MS01YWRjLTg1NGYtMjc0MDhkMTBhNjIzXCIsXCJzZXNzaW9uSWRcIjpcImY4MDU0ODJjLTIxZTUtNDY2Mi04YTg2LTI4MzFiYmY5YzU0ZlwiLFwiYWRkaXRpb25hbERhdGFcIjpcIno1NC9NZzltdjE2WXdmb0gvS0EwYkdUOVdycFpTZWNneVkwS0lKWkxxcEZSTkczdTlLa2pWZDNoWjU1ZStNZERhWXBOVi9UOUxIRmtQejFFQisybTdRPT1cIixcInJvbGVcIjpcIm9yZGVyLWJhc2ljLG5vbl90cmFkaW5nLWJhc2ljLG9yZGVyX3JlYWRfb25seS1iYXNpY1wiLFwic291cmNlSXBBZGRyZXNzXCI6XCIyMDIuOTQuMTYxLjIwLDE3Mi42OS4xNzkuNjEsMzUuMjQxLjIzLjEyM1wiLFwidHdvRmFFeHBpcnlUc1wiOjE3ODQwNzU0MDAwMDAsXCJ2ZW5kb3JOYW1lXCI6XCJncm93d0FwaVwifSIsImlzcyI6ImFwZXgtYXV0aC1wcm9kLWFwcCJ9.KIEO_HsN-vMSN3-k5cjS7Yq4bksOctiaaDiDCG5onQz9QTg0m0WjRRatJMH_SRhu0UAMYDMHyQvy0a1aOljDmQ
+
+Grow TOTP Token :
+TOTP Key
+eyJraWQiOiJaTUtjVXciLCJhbGciOiJFUzI1NiJ9.eyJleHAiOjI1NzI0NDQ2MzEsImlhdCI6MTc4NDA0NDYzMSwibmJmIjoxNzg0MDQ0NjMxLCJzdWIiOiJ7XCJ0b2tlblJlZklkXCI6XCIzMjJkZGMwNC03ZmFmLTQ2MTctYTFkNi1kZjI1MTZmNjk5MzZcIixcInZlbmRvckludGVncmF0aW9uS2V5XCI6XCJlMzFmZjIzYjA4NmI0MDZjODg3NGIyZjZkODQ5NTMxM1wiLFwidXNlckFjY291bnRJZFwiOlwiMjNmMDcwMTMtNDNiOC00YzE2LTk0OTEtMmVmODVmYWMzZWVmXCIsXCJkZXZpY2VJZFwiOlwiMzVjY2NjMWYtMWU2MS01YWRjLTg1NGYtMjc0MDhkMTBhNjIzXCIsXCJzZXNzaW9uSWRcIjpcIjEwOGEzY2Y5LThjZDMtNGQyMi1hMDI4LTYyMjljYjI1NTg3NVwiLFwiYWRkaXRpb25hbERhdGFcIjpcIno1NC9NZzltdjE2WXdmb0gvS0EwYkdUOVdycFpTZWNneVkwS0lKWkxxcEZSTkczdTlLa2pWZDNoWjU1ZStNZERhWXBOVi9UOUxIRmtQejFFQisybTdRPT1cIixcInJvbGVcIjpcImF1dGgtdG90cFwiLFwic291cmNlSXBBZGRyZXNzXCI6XCIyMDIuOTQuMTYxLjIwLDE3Mi42OS45NS43MSwzNS4yNDEuMjMuMTIzXCIsXCJ0d29GYUV4cGlyeVRzXCI6MjU3MjQ0NDYzMTAzMCxcInZlbmRvck5hbWVcIjpcImdyb3d3QXBpXCJ9IiwiaXNzIjoiYXBleC1hdXRoLXByb2QtYXBwIn0.8Eh2v8qWnJ6NOeBuYmsCxzFPm0BOzCGwl3StfSQT-sh2OuGJYSSQXHirSs6CAxxnGREYpF1z6xuC9DV7uHA_Ag
+
+TOTP QR code
+AZBK742WUGEM2T24EMURXJ3QS5YSMNJE
+
+
+python -m tests.test_login
+python -m tests.test_market
+python -m tests.test_orders
+python -m tests.test_websocket
+
+
+PAT Development Charter
+Every module must execute successfully.
+Every module must have a test.
+No live trading during development.
+Minimum 300 paper trades before enabling live orders.
+Every recommendation must explain "Why?"
+Capital protection is more important than trade frequency.
+The system must be understandable by a non-expert trader.
+architecture of the project
+
+NPAT/
+│
+├── app.py
+├── config.py
+├── logger.py
+├── requirements.txt
+├── README.md
+│
+├── data/
+│   ├── __init__.py
+│   │
+│   ├── providers/
+│   │   ├── __init__.py
+│   │   ├── groww_provider.py
+│   │   ├── market_data.py
+│   │   └── cache.py
+│   │
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── option.py
+│   │   ├── future.py
+│   │   └── greeks.py
+│   │
+│   ├── database/
+│   │   ├── __init__.py
+│   │   ├── sqlite.py
+│   │   └── history.py
+│   │
+│   └── utils/
+│       ├── __init__.py
+│       ├── parser.py
+│       └── helpers.py
+│
+├── dashboard/
+│   ├── __init__.py
+│   ├── options_chain.py
+│   ├── oi_analyzer.py
+│   ├── greeks.py
+│   ├── liquidity.py
+│   └── charts.py
+│
+├── strategies/
+│   ├── __init__.py
+│   ├── scalping.py
+│   ├── smart_money.py
+│   ├── liquidity_grab.py
+│   └── signal_engine.py
+│
+├── telegram/
+│   ├── __init__.py
+│   ├── notifier.py
+│   └── commands.py
+│
+├── ai/
+│   ├── __init__.py
+│   ├── analyzer.py
+│   └── recommendations.py
+│
+├── tests/
+│   ├── test_provider.py
+│   ├── test_market_data.py
+│   └── test_cache.py
+│
+└── logs/

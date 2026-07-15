@@ -1,0 +1,239 @@
+NPAT AI Rulebook v1.0
+I propose we organize it into these sections.
+
+1. Market Regime Engine
+
+First question every morning:
+
+Trend Day
+Range Day
+Gap Up
+Gap Down
+Expiry Day
+Event Day
+High Volatility
+Low Volatility
+
+No signal is generated until the market regime is identified.
+
+2. Market Context Engine
+
+This becomes the brain.
+
+Inputs:
+
+Long Build-up
+Long Unwinding
+Short Build-up
+Short Covering
+OI Change
+Volume Change
+LTP Change
+IV Change
+VIX
+ATR
+
+Output:
+
+Bullish
+Bearish
+Neutral
+
+3. Heavyweight Index Engine
+
+Monitor the largest NIFTY contributors.
+
+Initially:
+
+HDFC Bank
+Reliance
+ICICI Bank
+Bharti Airtel
+Infosys
+TCS
+L&T
+SBI
+Axis Bank
+AI should answer:
+Are the heavyweights supporting the index move?
+
+4. Option Intelligence Engine
+
+For every option:
+
+Calculate:
+
+Delta
+Gamma
+Theta
+Vega
+IV
+
+Then translate them into plain English.
+Example:
+This option may lose approximately ₹18–₹22 today due to time decay if the market remains sideways.
+
+5. Volatility Engine
+
+Using VIX:
+
+Expected Day Range
+Remaining Day Range
+Volatility Expansion
+Volatility Contraction
+Example:
+Expected move remaining: 42 points.
+A 120-point target is unrealistic today.
+
+. Liquidity Engine
+Identify:
+
+Call Wall
+Put Wall
+Max Pain
+High OI Zones
+OI Shift
+Volume Shift
+
+7. Risk Engine
+
+Before every signal:
+
+Check:
+
+Risk/Reward ≥ 1:2
+Theta acceptable?
+IV acceptable?
+Enough remaining expected move?
+Sufficient liquidity?
+
+If not:
+
+NO TRADE
+
+. Confidence Engine
+
+Each engine contributes.
+
+Example:
+
+Engine	Weight
+Market Regime	15%
+Market Context	20%
+Heavyweights	15%
+Option Intelligence	15%
+Liquidity	15%
+Volatility	10%
+Risk	10%
+Final output:
+Confidence = 0–100
+
+9. Explainability Engine
+
+Every signal must answer:
+
+Why?
+What supports it?
+What could invalidate it?
+
+For example:
+
+UY PUT
+
+Confidence: 88%
+
+Reason:
+✔ Long Unwinding
+✔ Fresh Short Build-up
+✔ Reliance below VWAP
+✔ HDFC Bank weak
+✔ VIX rising
+✔ Expected move supports downside
+
+Risk:
+Medium
+
+Invalidation:
+NIFTY closes above 25,680
+
+10. Capital Protection Engine
+
+This is the final gate.
+
+It asks:
+
+"If this were my own money, would I take this trade?"
+
+If the answer is No, NPAT blocks the signal.
+
+Trade Memory Engine
+
+Most systems treat every trade independently.
+
+NPAT shouldn't.
+
+It should remember the last few signals.
+
+Example:
+
+Three bullish signals failed in the last hour.
+Market is ignoring bullish setups.
+Current bullish signal should have lower confidence.
+
+Likewise, if the market has respected bearish signals consistently, confidence in the next bearish signal can increase.
+
+This isn't predicting the future—it's adapting to how the market is behaving today, which is often different from yesterday.
+
+======================================================
+NPAT AI RULEBOOK
+Version : 1.0
+
+Author : Rocky Chopra
+AI Architect : ChatGPT
+
+Project :
+NIFTY Predictive Analytics Terminal (NPAT)
+
+Mission :
+Protect Capital First.
+Generate Profit Second.
+
+Date Started :
+16 July 2026
+======================================================
+
+Chapter 1
+Project Philosophy
+
+Chapter 2
+Market Regime Engine
+
+Chapter 3
+Market Context Engine
+
+Chapter 4
+Heavyweight Engine
+
+Chapter 5
+Option Intelligence
+
+Chapter 6
+Volatility Engine
+
+Chapter 7
+Risk Engine
+
+Chapter 8
+Confidence Engine
+
+Chapter 9
+Capital Protection Engine
+
+Chapter 10
+Paper Trading Rules
+
+Chapter 11
+AI Learning Rules
+
+Chapter 12
+Future Enhancements
