@@ -22,7 +22,7 @@ python tests/test_market_data.py
 PAT Development Charter
 Every module must execute successfully.
 Every module must have a test.
-No live trading during development.
+No live trading during development
 Minimum 300 paper trades before enabling live orders.
 Every recommendation must explain "Why?"
 Capital protection is more important than trade frequency.

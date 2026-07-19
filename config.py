@@ -71,13 +71,50 @@ DEFAULT_TIMEFRAME = "1m"
 
 RISK_FREE_RATE = 0.07
 
-LOT_SIZE = 75
+# =========================================================
+# CONTRACT SPECIFICATIONS
+# =========================================================
+
+LOT_SIZES = {
+    "NIFTY": 65,
+    "BANKNIFTY": 35,      # Update if NSE revises
+    "FINNIFTY": 65,
+    "MIDCPNIFTY": 120,
+}
 
 NIFTY_STRIKE_STEP = 50
 
 BANKNIFTY_STRIKE_STEP = 100
 
+# =========================================================
+# HTTP SETTINGS
+# =========================================================
 
+HTTP_TIMEOUT = 15
+
+HTTP_RETRIES = 3
+
+HTTP_RETRY_DELAY = 2
+
+USER_AGENT = (
+    "Mozilla/5.0 "
+    "(Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 "
+    "(KHTML, like Gecko) "
+    "Chrome/138.0 Safari/537.36"
+)
+
+# =========================================================
+# DATA PROVIDER
+# =========================================================
+
+DEFAULT_DATA_PROVIDER = "YAHOO"
+
+ENABLE_NSE = True
+
+ENABLE_YAHOO = True
+
+ENABLE_GROWW = False
 # =========================================================
 # DASHBOARD SETTINGS
 # =========================================================
@@ -113,7 +150,8 @@ class ShoonyaConfig:
     vendor_code: str = os.getenv("SHOONYA_VENDOR_CODE", "")
 
     imei: str = "NPAT-TERMINAL"
-
+    
+    timeout: int = HTTP_TIMEOUT
 
 SHOONYA = ShoonyaConfig()
 
@@ -142,6 +180,8 @@ ENABLE_AI_REASONING = True
 # LOGGING
 # =========================================================
 
-LOG_LEVEL = "INFO"
+LOG_DIR = PROJECT_ROOT / "logs"
 
-LOG_FILE = "logs/npat.log"
+LOG_DIR.mkdir(exist_ok=True)
+
+LOG_FILE = LOG_DIR / "npat.log"
