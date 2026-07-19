@@ -9,11 +9,15 @@ TOTP QR code
 AZBK742WUGEM2T24EMURXJ3QS5YSMNJE
 
 
+https://github.com/kuldeepverma/groww
+https://github.com/karthik1729/groww-mcp
+
+
 python -m tests.test_login
 python -m tests.test_market
 python -m tests.test_orders
 python -m tests.test_websocket
-
+python tests/test_market_data.py
 
 PAT Development Charter
 Every module must execute successfully.
@@ -89,3 +93,6 @@ NPAT/
 │   └── test_cache.py
 │
 └── logs/
+
+
+https://gist.github.com/souvik131/b2f48d6f15ed94bebdf65eba89de430f
