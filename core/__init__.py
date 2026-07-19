@@ -1,0 +1,3 @@
+"""
+NPAT Core Package
+"""
