@@ -1,23 +1,92 @@
 """
-provider_base.py
+=========================================================
+NPAT - Market Data Provider Base
+=========================================================
 
-Abstract base class for all market data providers used by NPAT.
+Purpose
+-------
+Defines the abstract interface that every market data
+provider must implement.
 
-Every provider (Yahoo, NSE, Groww, Shoonya, etc.) must implement
-this interface so that the analytics engine remains provider-independent.
+Supported Providers
+-------------------
+- NSE
+- Yahoo Finance
+- Groww
+- Shoonya
+- Zerodha
+- Angel One
+- Future providers
+
+Using a common interface allows the analytics engine,
+strategy engine and dashboard to remain completely
+provider-independent.
+
+Author : Rocky Chopra
+Version: 2.0.0
+=========================================================
 """
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List
+from typing import List
+
+from core.models import (
+    HistoricalCandle,
+    MarketSnapshot,
+    OptionData,
+    Quote,
+)
 
 
 class MarketDataProvider(ABC):
-    """Abstract base class for market data providers."""
+    """
+    Base class for every market data provider.
+
+    Every provider must implement these methods so the rest
+    of NPAT can consume market data without knowing which
+    provider is supplying it.
+    """
+
+    # =====================================================
+    # Health Check
+    # =====================================================
 
     @abstractmethod
-    def get_quote(self, symbol: str) -> Dict[str, Any]:
-        """Return latest quote for a symbol."""
-        pass
+    def health_check(self) -> bool:
+        """
+        Verify the provider is reachable.
+
+        Returns
+        -------
+        bool
+            True if provider is operational.
+        """
+        raise NotImplementedError
+
+    # =====================================================
+    # Live Quote
+    # =====================================================
+
+    @abstractmethod
+    def get_quote(self, symbol: str) -> Quote:
+        """
+        Return the latest quote for a symbol.
+
+        Parameters
+        ----------
+        symbol : str
+
+        Returns
+        -------
+        Quote
+        """
+        raise NotImplementedError
+
+    # =====================================================
+    # Historical Data
+    # =====================================================
 
     @abstractmethod
     def get_historical_data(
@@ -25,21 +94,108 @@ class MarketDataProvider(ABC):
         symbol: str,
         interval: str = "5m",
         period: str = "5d",
-    ) -> Any:
-        """Return historical OHLCV data."""
-        pass
+    ) -> List[HistoricalCandle]:
+        """
+        Return historical OHLCV candles.
+
+        Parameters
+        ----------
+        symbol : str
+
+        interval : str
+
+        period : str
+
+        Returns
+        -------
+        List[HistoricalCandle]
+        """
+        raise NotImplementedError
+
+    # =====================================================
+    # Expiry Dates
+    # =====================================================
 
     @abstractmethod
-    def get_option_chain(self, symbol: str) -> Dict[str, Any]:
-        """Return complete option chain."""
-        pass
+    def get_expiries(
+        self,
+        symbol: str,
+    ) -> List[str]:
+        """
+        Return available option expiries.
+
+        Parameters
+        ----------
+        symbol : str
+
+        Returns
+        -------
+        List[str]
+        """
+        raise NotImplementedError
+
+    # =====================================================
+    # Option Chain
+    # =====================================================
 
     @abstractmethod
-    def get_expiries(self, symbol: str) -> List[str]:
-        """Return available expiry dates."""
-        pass
+    def get_option_chain(
+        self,
+        symbol: str,
+        expiry: str | None = None,
+    ) -> List[OptionData]:
+        """
+        Return the complete option chain.
+
+        Parameters
+        ----------
+        symbol : str
+
+        expiry : str | None
+
+        Returns
+        -------
+        List[OptionData]
+        """
+        raise NotImplementedError
+
+    # =====================================================
+    # Market Snapshot
+    # =====================================================
 
     @abstractmethod
-    def health_check(self) -> bool:
-        """Return True if provider is reachable."""
-        pass
+    def get_market_snapshot(
+        self,
+        symbol: str,
+        expiry: str | None = None,
+    ) -> MarketSnapshot:
+        """
+        Return a fully analysed market snapshot.
+
+        Includes
+
+        • Spot Price
+
+        • ATM Strike
+
+        • PCR
+
+        • Max Pain
+
+        • Support
+
+        • Resistance
+
+        • Complete Option Chain
+
+        Parameters
+        ----------
+        symbol : str
+
+        expiry : str | None
+
+        Returns
+        -------
+        MarketSnapshot
+        """
+        raise NotImplementedError

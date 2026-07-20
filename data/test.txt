@@ -11,6 +11,7 @@ AZBK742WUGEM2T24EMURXJ3QS5YSMNJE
 
 https://github.com/kuldeepverma/groww
 https://github.com/karthik1729/groww-mcp
+https://github.com/VarunS2002/Python-NSE-Option-Chain-Analyzer?tab=readme-ov-file
 
 
 python -m tests.test_login
@@ -96,3 +97,51 @@ NPAT/
 
 
 https://gist.github.com/souvik131/b2f48d6f15ed94bebdf65eba89de430f
+
+20 July 2026 structure
+NPAT/
+│
+├── config.py
+│
+├── core/
+│
+├── data/
+│   ├── providers/
+│   │
+│   ├── provider_base.py
+│   ├── yahoo_provider.py
+│   ├── groww_provider.py
+│   ├── nse_provider.py        ← Thin Orchestrator
+│   │
+│   └── nse/
+│       ├── __init__.py
+│       ├── constants.py
+│       ├── session.py
+│       ├── api.py
+│       ├── parser.py
+│       ├── analytics.py
+│       └── helpers.py
+
+20 07 2026 NSE structure
+NSE Website
+      │
+      ▼
+ HttpClient
+      │
+      ▼
+NSESessionManager
+      │
+      ▼
+   NSEApi          ✅ COMPLETE
+      │
+      ▼
+ parser.py         ← Next
+      │
+      ▼
+ analytics.py
+      │
+      ▼
+ nse_provider.py
+      │
+      ▼
+ Dashboard

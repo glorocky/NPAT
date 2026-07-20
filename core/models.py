@@ -5,14 +5,14 @@ NPAT - Core Data Models
 
 Purpose
 -------
-Central data models used across the NPAT application.
+Central strongly-typed data models used throughout NPAT.
 
-These dataclasses provide strongly typed objects instead
-of dictionaries, making the code safer, easier to read,
-and easier to maintain.
+These dataclasses replace dictionaries across the application,
+providing type safety, IDE auto-completion, easier debugging,
+and cleaner architecture.
 
 Author : Rocky Chopra
-Version: 1.0.0
+Version: 2.0.0
 =========================================================
 """
 
@@ -20,7 +20,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 
 # =========================================================
@@ -29,16 +29,22 @@ from typing import Dict, List, Optional
 
 @dataclass(frozen=True)
 class Quote:
-    """Live market quote."""
+    """
+    Represents a live market quote.
+    """
 
     symbol: str
     exchange: str
+
     last_price: float
+
     open: float
     high: float
     low: float
     previous_close: float
+
     volume: int = 0
+
     timestamp: Optional[datetime] = None
 
 
@@ -48,25 +54,37 @@ class Quote:
 
 @dataclass(frozen=True)
 class HistoricalCandle:
-    """Represents one OHLCV candle."""
+    """
+    Represents one historical OHLCV candle.
+    """
 
     timestamp: datetime
+
     open: float
     high: float
     low: float
     close: float
+
     volume: int
 
 
 # =========================================================
-# Option Data
+# Option Chain Strike
 # =========================================================
 
 @dataclass(frozen=True)
 class OptionData:
-    """Single option strike data."""
+    """
+    Represents one option strike.
 
-    strike: float
+    Contains both Call and Put information for a strike.
+    """
+
+    strike_price: float
+
+    expiry: str
+
+    underlying_price: float
 
     call_oi: int = 0
     put_oi: int = 0
@@ -91,25 +109,34 @@ class OptionData:
 @dataclass(frozen=True)
 class MarketSnapshot:
     """
-    Complete market snapshot used by the analytics engine.
+    Complete analytical market snapshot.
+
+    Generated from the live option chain and used by
+    the analytics engine.
     """
 
     symbol: str
 
-    spot_price: float
+    exchange: str = "NSE"
 
-    expiry: str
+    spot_price: float = 0.0
 
-    atm_strike: int
+    expiry: str = ""
+
+    atm_strike: int = 0
 
     pcr: float = 0.0
 
     max_pain: Optional[int] = None
 
-    support: List[int] = field(default_factory=list)
+    support: List[tuple[int, int]] = field(default_factory=list)
 
-    resistance: List[int] = field(default_factory=list)
+    resistance: List[tuple[int, int]] = field(default_factory=list)
 
-    options: List[OptionData] = field(default_factory=list)
+    total_call_oi: int = 0
 
-    timestamp: Optional[datetime] = None
+    total_put_oi: int = 0
+
+    option_chain: List[OptionData] = field(default_factory=list)
+
+    timestamp: datetime = field(default_factory=datetime.now)
