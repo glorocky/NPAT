@@ -122,26 +122,120 @@ NPAT/
 │       ├── analytics.py
 │       └── helpers.py
 
-20 07 2026 NSE structure
-NSE Website
-      │
-      ▼
- HttpClient
-      │
-      ▼
-NSESessionManager
-      │
-      ▼
-   NSEApi          ✅ COMPLETE
-      │
-      ▼
- parser.py         ← Next
-      │
-      ▼
- analytics.py
-      │
-      ▼
- nse_provider.py
-      │
-      ▼
- Dashboard
+New structure
+ NPAT/
+│
+├── app.py                          # Application entry point
+├── config.py                       # Global configuration
+├── requirements.txt
+├── README.md
+│
+├── core/                           # Pure domain layer (Frozen)
+│   ├── __init__.py
+│   ├── models.py
+│   ├── analytics.py
+│   └── constants.py
+│
+├── providers/                      # External data providers
+│   ├── __init__.py
+│   │
+│   ├── base_provider.py
+│   │
+│   ├── groww/
+│   │   ├── __init__.py
+│   │   ├── provider.py
+│   │   ├── session.py
+│   │   ├── parser.py
+│   │   └── api.py
+│   │
+│   ├── nse/
+│   │   ├── __init__.py
+│   │   ├── provider.py
+│   │   ├── session.py
+│   │   ├── parser.py
+│   │   ├── api.py
+│   │   └── constants.py
+│   │
+│   ├── participant/
+│   │   └── provider.py
+│   │
+│   ├── vix/
+│   │   └── provider.py
+│   │
+│   └── futures/
+│       └── provider.py
+│
+├── services/                       # Business orchestration
+│   ├── __init__.py
+│   ├── market_service.py
+│   ├── base_service.py
+│   ├── cache.py
+│   ├── telemetry.py
+│   ├── rate_limiter.py
+│   ├── circuit_breaker.py
+│   ├── exceptions.py
+│   ├── health.py
+│   ├── vix_service.py
+│   ├── futures_service.py
+│   ├── participant_service.py
+│   ├── greeks_service.py
+│   ├── heatmap_service.py
+│   └── blackscholes_service.py
+│
+├── ai/                             # AI reasoning
+│   ├── __init__.py
+│   ├── decision_engine.py
+│   ├── prediction_engine.py
+│   ├── reasoning_engine.py
+│   ├── confidence_engine.py
+│   └── prompts.py
+│
+├── dashboard/                      # User interface
+│   ├── __init__.py
+│   ├── app.py
+│   ├── layout.py
+│   ├── widgets.py
+│   ├── charts.py
+│   ├── tables.py
+│   ├── heatmap.py
+│   ├── theme.py
+│   └── assets/
+│
+├── pricing/                        # Option pricing models
+│   ├── __init__.py
+│   ├── black_scholes.py
+│   ├── greeks.py
+│   └── implied_volatility.py
+│
+├── indicators/                     # Technical analytics
+│   ├── __init__.py
+│   ├── pcr.py
+│   ├── max_pain.py
+│   ├── support_resistance.py
+│   ├── fvg.py
+│   ├── fibonacci.py
+│   ├── oi_analysis.py
+│   └── market_breadth.py
+│
+├── notifications/
+│   ├── __init__.py
+│   └── whatsapp.py
+│
+├── storage/
+│   ├── cache/
+│   ├── logs/
+│   └── snapshots/
+│
+├── utils/
+│   ├── logger.py
+│   ├── helpers.py
+│   ├── validators.py
+│   └── datetime_utils.py
+│
+└── tests/
+    ├── test_models.py
+    ├── test_parser.py
+    ├── test_analytics.py
+    ├── test_services.py
+    ├── test_ai.py
+    └── test_dashboard.py
