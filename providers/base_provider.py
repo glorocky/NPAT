@@ -51,6 +51,10 @@ class BaseProvider(ABC):
         provider is supplying it.
     """
     
+    # =====================================================
+    # Constructor
+    # =====================================================
+    
     def __init__(self, provider_name: str):
         """
         Initialize the provider.
@@ -61,6 +65,20 @@ class BaseProvider(ABC):
             Human-readable provider name.
         """
         self.provider_name = provider_name
+        self.logger = logging.getLogger(f"providers.{provider_name}")
+        
+    # =====================================================
+    # Provider Information
+    # =====================================================
+
+    def provider_info(self) -> dict:
+        """
+        Return basic provider information.
+        """
+        return {
+            "provider": self.provider_name,
+            "class": self.__class__.__name__,
+        }
     
     # =====================================================
     # Health Check
