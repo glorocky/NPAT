@@ -28,6 +28,7 @@ Version: 2.0.0
 """
 
 from __future__ import annotations
+import logging
 
 from abc import ABC, abstractmethod
 from typing import List
@@ -40,15 +41,27 @@ from core.models import (
 )
 
 
-class MarketDataProvider(ABC):
+class BaseProvider(ABC):
+    
     """
-    Base class for every market data provider.
+        Base class for every market data provider.
 
-    Every provider must implement these methods so the rest
-    of NPAT can consume market data without knowing which
-    provider is supplying it.
+        Every provider must implement these methods so the rest
+        of NPAT can consume market data without knowing which
+        provider is supplying it.
     """
+    
+    def __init__(self, provider_name: str):
+        """
+        Initialize the provider.
 
+        Parameters
+        ----------
+        provider_name : str
+            Human-readable provider name.
+        """
+        self.provider_name = provider_name
+    
     # =====================================================
     # Health Check
     # =====================================================
