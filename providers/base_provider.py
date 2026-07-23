@@ -31,6 +31,7 @@ from __future__ import annotations
 import logging
 
 from abc import ABC, abstractmethod
+from services.telemetry import Telemetry
 from typing import List
 
 from core.models import (
@@ -66,6 +67,7 @@ class BaseProvider(ABC):
         """
         self.provider_name = provider_name
         self.logger = logging.getLogger(f"providers.{provider_name}")
+        self.telemetry = Telemetry()
         
     # =====================================================
     # Provider Information
