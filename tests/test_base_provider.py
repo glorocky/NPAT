@@ -14,19 +14,34 @@ class DummyProvider(BaseProvider):
 
     def get_expiries(self, symbol):
         return []
-
-    def get_option_chain(self, symbol, expiry=None):
+    
+    def get_option_chain(
+        self,
+        exchange: str,
+        symbol: str,
+        expiry: str | None = None,
+    ):
         return []
+
+    def get_greeks(
+        self,
+        exchange: str,
+        symbol: str,
+        expiry: str,
+        strike: int,
+        option_type: str,
+    ):
+        return None
 
     def get_market_snapshot(self, symbol, expiry=None):
         return None
 
 
-provider = DummyProvider("Dummy")
-info = provider.provider_info()
-assert info["provider"] == "Dummy"
-assert info["class"] == "DummyProvider"
+        provider = DummyProvider("Dummy")
+        info = provider.provider_info()
+        assert info["provider"] == "Dummy"
+        assert info["class"] == "DummyProvider"
 
-print("✅ BaseProvider test passed")
+        print("✅ BaseProvider test passed")
 
 

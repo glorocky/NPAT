@@ -155,6 +155,24 @@ class ShoonyaConfig:
 
 SHOONYA = ShoonyaConfig()
 
+# =========================================================
+# GROWW CONFIGURATION
+# =========================================================
+
+@dataclass
+class GrowwConfig:
+    """
+    Groww API configuration.
+    """
+
+    api_key: str = os.getenv("GROWW_API_KEY", "")
+    totp_secret: str = os.getenv("GROWW_TOTP_SECRET", "")
+
+    timeout: int = HTTP_TIMEOUT
+
+
+GROWW = GrowwConfig()
+
 
 # =========================================================
 # WEBSOCKET SETTINGS

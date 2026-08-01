@@ -239,3 +239,166 @@ New structure
     ├── test_services.py
     ├── test_ai.py
     └── test_dashboard.py
+
+                   +----------------------+
+                   |    Groww Provider    |
+                   +----------+-----------+
+                              |
+                              v
+                   +----------------------+
+                   |    Base Provider     |
+                   +----------+-----------+
+                              |
+                              v
+                   +----------------------+
+                   |    Core Models       |
+                   |----------------------|
+                   | Quote                |
+                   | HistoricalCandle     |
+                   | OptionData           |
+                   | OptionGreeks         |
+                   | MarketSnapshot       |
+                   +----------+-----------+
+                              |
+         +--------------------+--------------------+
+         |                    |                    |
+         v                    v                    v
+  Market Service      Decision Engine        Dashboard
+                              |
+                              v
+                         AI Engine
+
+GrowwProvider             ✅ COMPLETE
+      ↓
+MarketService             ← NOW
+      ↓
+Core Analytics
+      ↓
+ATM ± 3 strikes
+Black-Scholes CE/PE
+VIX expected range
+PCR / OI / Max Pain
+Support / Resistance
+Technicals
+Heat Map / Buildup
+      ↓
+PredictionEngine
+      ↓
+DecisionEngine
+      ↓
+Dashboard
+
+OptionData[]
+
+
+analytics\
+│
+├── __init__.py
+├── market_analytics.py
+├── option_analytics.py
+├── premium_analytics.py
+├── vix_analytics.py
+├── technical_analytics.py
+├── futures_analytics.py
+├── breadth_analytics.py
+└── heatmap_analytics.py
+     ↓
+MarketAnalytics
+     ├── identify ATM strike
+     ├── total Call OI
+     ├── total Put OI
+     ├── PCR
+     └── build MarketSnapshot
+
+
+     Groww Provider                  ✅ COMPLETE
+   ├── Quote
+   ├── Historical
+   ├── Expiries
+   ├── Option Chain
+   └── Greeks
+
+MarketAnalytics v1              ✅ COMPLETE
+   ├── Spot
+   ├── ATM
+   ├── Total Call OI
+   ├── Total Put OI
+   └── PCR
+
+OptionAnalytics                 ← NEXT
+   ├── Max Pain
+   ├── Support levels
+   ├── Resistance levels
+   └── OI concentration
+
+PremiumAnalytics
+   ├── ATM ±3 strikes
+   ├── CE + PE
+   ├── Black-Scholes theoretical premium
+   ├── Market vs theoretical premium
+   └── Greeks
+
+VIXAnalytics
+   ├── Expected NIFTY move
+   ├── Upper/lower expected range
+   ├── Actual range
+   ├── Range consumed %
+   └── Remaining expected movement
+
+HeatmapAnalytics
+   ├── NIFTY constituents
+   ├── Sector strength
+   ├── Long buildup
+   ├── Short buildup
+   ├── Short covering
+   └── Long unwinding
+
+
+Where NPAT stands now We have successfully connected:
+Groww API
+   ↓
+GrowwProvider
+   ↓
+Normalized OptionData
+   ↓
+MarketService
+   ├── MarketAnalytics
+   │    ├── Spot
+   │    ├── ATM
+   │    ├── PCR
+   │    ├── Max Pain
+   │    └── Support / Resistance
+   │
+   └── OISnapshotStore
+          ↓
+      OptionPositioningAnalytics
+          ├── Full-chain positioning
+          ├── CE / PE summary
+          ├── ATM ±5 positioning
+          ├── ATM summary
+          ├── Top OI additions
+          └── Top OI reductions
+                  ↓
+            MarketSnapshot
+                  ↓
+            DashboardSnapshot
+            
+
+dashboard/
+│
+├── app.py
+├── layout.py
+├── sidebar.py
+├── header.py
+├── theme.py
+└── components/
+    ├── __init__.py
+    ├── ai_panel.py
+    ├── futures_panel.py
+    ├── greeks_panel.py
+    ├── premium_panel.py
+    ├── market_regime.py
+    ├── heatmap.py
+    ├── option_chain.py
+    ├── sector_strength.py
+    └── vix_panel.py
