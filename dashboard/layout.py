@@ -43,6 +43,12 @@ from dashboard.components.vix_panel import (
 from dashboard.components.sector_strength import (
     render as render_sector_strength,
 )
+from dashboard.components.heatmap import (
+    render as render_heatmap,
+)
+from dashboard.components.option_chain import (
+    render as render_option_chain,
+)
 
 
 def render(
@@ -132,12 +138,9 @@ def render(
         
 
     with right:
+        
+        render_heatmap(snapshot)
 
-        st.container(border=True)
-
-        st.subheader("🔥 Market Heatmap")
-
-        st.write("Coming soon...")
 
     # -------------------------------------------------
     # Option Chain
@@ -148,11 +151,7 @@ def render(
     )
 
     with option_chain:
-
-        st.subheader("📋 Live Option Chain")
-
-        st.write(
-            "Option Chain will appear here."
-        )
-
+        
+        render_option_chain(snapshot)
+        
     return settings
