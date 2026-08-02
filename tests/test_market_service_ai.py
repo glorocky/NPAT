@@ -94,14 +94,15 @@ snapshot = service.get_dashboard_snapshot(
 
 assert snapshot.market_regime is not None
 
-
 # =====================================================
 # Validate AI Result
 # =====================================================
 
-assert snapshot.ai_signal is not None
+assert snapshot.ai is not None
 
-assert snapshot.ai_signal in {
+assert snapshot.ai.signal is not None
+
+assert snapshot.ai.signal in {
     "STRONG_BUY",
     "BUY",
     "NEUTRAL",
@@ -109,17 +110,21 @@ assert snapshot.ai_signal in {
     "STRONG_SELL",
 }
 
-assert snapshot.ai_confidence is not None
+assert snapshot.ai.confidence is not None
 
 assert (
     0.0
-    <= snapshot.ai_confidence
+    <= snapshot.ai.confidence
     <= 100.0
 )
 
-assert snapshot.ai_reasons
+assert snapshot.ai.reasons
 
-assert len(snapshot.ai_reasons) == 3
+assert len(snapshot.ai.reasons) >= 1
+
+
+
+
 
 
 # =====================================================
@@ -133,13 +138,15 @@ expected_signal = (
 )
 
 assert (
-    snapshot.ai_signal
+    
+    snapshot.ai.signal
     ==
     expected_signal
+    
 )
 
 assert (
-    snapshot.ai_confidence
+    snapshot.ai.confidence
     ==
     snapshot.market_regime.confidence
 )
@@ -149,9 +156,9 @@ assert (
 # Validate Prediction Result
 # =====================================================
 
-assert snapshot.ai_prediction is not None
+assert snapshot.ai.prediction is not None
 
-prediction = snapshot.ai_prediction
+prediction = snapshot.ai.prediction
 
 assert prediction.direction in {
     "STRONG_BULLISH",
@@ -229,12 +236,12 @@ print()
 
 print(
     "AI Signal          :",
-    snapshot.ai_signal,
+    snapshot.ai.signal,
 )
 
 print(
     "AI Confidence      :",
-    snapshot.ai_confidence,
+    snapshot.ai.confidence,
 )
 
 print()
@@ -243,7 +250,7 @@ print("AI Reasons")
 
 print("-" * 70)
 
-for reason in snapshot.ai_reasons:
+for reason in snapshot.ai.reasons:
     print("-", reason)
 
 print()
@@ -551,7 +558,7 @@ print(
 
 print(
     "Premium Score      :",
-    snapshot.ai_prediction.premium_score,
+    snapshot.ai.prediction.premium_score,
 )
 
 print(

@@ -15,9 +15,15 @@ It only renders the dashboard layout.
 """
 
 import streamlit as st
-
 import header
 import sidebar
+from components.market_summary import (
+    render as render_market_summary,
+)
+
+from components.ai_panel import (
+    render as render_ai_panel,
+)
 
 
 def render() -> dict:
@@ -41,22 +47,20 @@ def render() -> dict:
     # -------------------------------------------------
 
     header.render()
+    
+    # -------------------------------------------------
+    # Market Summary
+    # -------------------------------------------------
+
+    render_market_summary()
+
+    st.write("")
 
     # -------------------------------------------------
     # AI Panel
     # -------------------------------------------------
 
-    ai_container = st.container(
-        border=True,
-    )
-
-    with ai_container:
-
-        st.subheader("🤖 AI Decision")
-
-        st.info(
-            "AI Panel will be connected in Phase 2."
-        )
+    render_ai_panel()
 
     # -------------------------------------------------
     # Greeks / Premium

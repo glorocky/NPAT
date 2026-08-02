@@ -9,7 +9,7 @@ a complete dashboard snapshot. It contains no provider-specific logic.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field, replace
+from dataclasses import replace
 from datetime import datetime
 from typing import Any
 from analytics.futures_analytics import FuturesAnalytics
@@ -29,6 +29,7 @@ from analytics.sector_strength_analytics import (
 from analytics.market_regime_analytics import (
     MarketRegimeAnalytics,
 )
+from core.dashboard_models import DashboardSnapshot
 from storage.oi_snapshot_store import OISnapshotStore
 from core.models import (
     ForwardPremiumAnalysis,
@@ -45,59 +46,6 @@ from core.models import (
     VixRangeAnalysis,
 )
 
-
-@dataclass(slots=True)
-class DashboardSnapshot:
-    """
-    Rich dashboard model.
-
-    Extends the core MarketSnapshot with additional dashboard widgets.
-    """
-
-    market: MarketSnapshot
-
-    india_vix: float | None = None
-    
-    vix_analysis: VixRangeAnalysis | None = None
-
-    futures: FuturesAnalysis | None = None
-
-    greeks_analysis: list[GreeksAnalysis] = field(
-        default_factory=list
-    )
-    greeks_summary: GreeksSummary | None = None
-    
-    # -----------------------------
-    # Premium Analytics
-    # -----------------------------
-
-    premium_analysis: list[ForwardPremiumAnalysis] = field(
-        default_factory=list
-    )
-
-    participant_data: dict[str, Any] = field(default_factory=dict)
-
-    heatmap: list[HeatmapStock] = field(default_factory=list)
-    
-    heatmap_summary: HeatmapSummary | None = None
-    
-    sector_breadth: list[SectorBreadth] = field(
-    default_factory=list
-)
-    sector_strength: list[SectorStrength] = field(
-    default_factory=list
-)
-    market_regime: MarketRegimeAnalysis | None = None
-
-    ai_signal: str = "NEUTRAL"
-
-    ai_confidence: float = 0.0
-    
-    ai_prediction: PredictionAnalysis | None = None
-
-    ai_reasons: list[str] = field(default_factory=list)
-
-    generated_at: datetime = field(default_factory=datetime.now)
     
 class MarketService:
     """
@@ -408,14 +356,14 @@ class MarketService:
         # -----------------------------
         # Market Regime
         # -----------------------------
-
+        
         dashboard.market_regime = (
-            MarketRegimeAnalytics.analyze(
-                futures=dashboard.futures,
-                breadth=dashboard.heatmap_summary,
-                sectors=dashboard.sector_strength,
-                volatility=dashboard.vix_analysis,
-                )
+        MarketRegimeAnalytics.analyze(
+        futures=dashboard.futures,
+        breadth=dashboard.heatmap_summary,
+        sectors=dashboard.sector_strength,
+        volatility=dashboard.vix_analysis,
+            )
         )
         
         # -----------------------------
@@ -423,15 +371,9 @@ class MarketService:
         # -----------------------------
         if self.ai_service:
 
-            ai = self.ai_service.analyze(dashboard)
+            dashboard.ai = self.ai_service.analyze(dashboard)
 
-            dashboard.ai_signal = ai.signal
-
-            dashboard.ai_confidence = ai.confidence
-            
-            dashboard.ai_prediction = ai.prediction
-
-            dashboard.ai_reasons = ai.reasons
+            dashboard.prediction = dashboard.ai.prediction
 
         return dashboard
 
