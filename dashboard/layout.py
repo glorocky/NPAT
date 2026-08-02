@@ -33,6 +33,9 @@ from dashboard.components.greeks_panel import (
 from dashboard.components.premium_panel import (
     render as render_premium_panel,
 )
+from dashboard.components.futures_panel import (
+    render as render_futures_panel,
+)
 
 
 def render(
@@ -103,11 +106,7 @@ def render(
 
     with left:
 
-        st.container(border=True)
-
-        st.subheader("📈 Futures Analysis")
-
-        st.write("Coming soon...")
+        render_futures_panel(snapshot)
 
     with right:
 
