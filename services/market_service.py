@@ -252,6 +252,39 @@ class MarketService:
             )
         )
         
+        # -----------------------------
+        # ATM Premium Snapshot
+        # -----------------------------
+
+        if dashboard.premium_analysis:
+
+            dashboard.atm_call_premium = next(
+                (
+                    premium
+                    for premium in dashboard.premium_analysis
+                    if premium.option_type.upper() == "CE"
+                ),
+                None,
+            )
+
+            dashboard.atm_put_premium = next(
+                (
+                    premium
+                    for premium in dashboard.premium_analysis
+                    if premium.option_type.upper() == "PE"
+                ),
+                None,
+            )
+
+            if (
+                dashboard.atm_call_premium
+                and dashboard.atm_put_premium
+            ):
+                dashboard.relative_richness = (
+                    dashboard.atm_call_premium.forward_difference_pct
+                    - dashboard.atm_put_premium.forward_difference_pct
+                )
+                
         
         # -----------------------------
         # VIX Range Analytics

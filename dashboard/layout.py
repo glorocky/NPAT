@@ -30,6 +30,9 @@ from dashboard.components.ai_panel import (
 from dashboard.components.greeks_panel import (
     render as render_greeks_panel,
 )
+from dashboard.components.premium_panel import (
+    render as render_premium_panel,
+)
 
 
 def render(
@@ -90,12 +93,8 @@ def render(
 
     with right:
 
-        st.container(border=True)
-
-        st.subheader("💰 Premium Analysis")
-
-        st.write("Coming soon...")
-
+         render_premium_panel(snapshot)
+         
     # -------------------------------------------------
     # Futures / VIX
     # -------------------------------------------------

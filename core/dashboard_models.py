@@ -66,6 +66,16 @@ class DashboardSnapshot:
     # =====================================================
 
     premium_analysis: list[ForwardPremiumAnalysis] | None = None
+    
+    # =====================================================
+    # ATM Premium
+    # =====================================================
+
+    atm_call_premium: ForwardPremiumAnalysis | None = None
+
+    atm_put_premium: ForwardPremiumAnalysis | None = None
+
+    relative_richness: float | None = None
 
     # =====================================================
     # Futures
