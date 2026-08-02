@@ -36,6 +36,9 @@ from dashboard.components.premium_panel import (
 from dashboard.components.futures_panel import (
     render as render_futures_panel,
 )
+from dashboard.components.vix_panel import (
+    render as render_vix_panel,
+)
 
 
 def render(
@@ -109,12 +112,9 @@ def render(
         render_futures_panel(snapshot)
 
     with right:
+        
+         render_vix_panel(snapshot)
 
-        st.container(border=True)
-
-        st.subheader("🌡 India VIX")
-
-        st.write("Coming soon...")
 
     # -------------------------------------------------
     # Sector / Heatmap
