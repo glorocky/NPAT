@@ -40,6 +40,10 @@ from dashboard.components.vix_panel import (
     render as render_vix_panel,
 )
 
+from dashboard.components.sector_strength import (
+    render as render_sector_strength,
+)
+
 
 def render(
     snapshot: DashboardSnapshot,
@@ -123,12 +127,9 @@ def render(
     left, right = st.columns(2)
 
     with left:
-
-        st.container(border=True)
-
-        st.subheader("🏦 Sector Strength")
-
-        st.write("Coming soon...")
+        
+         render_sector_strength(snapshot)
+        
 
     with right:
 
