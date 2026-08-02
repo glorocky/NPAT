@@ -6,6 +6,7 @@ Market Summary Component
 """
 
 import streamlit as st
+from core.dashboard_models import DashboardSnapshot
 
 
 # =====================================================
@@ -67,27 +68,84 @@ def _card(
 # Render
 # =====================================================
 
-def render():
+def render(
+    snapshot: DashboardSnapshot,
+):
     """
-    Temporary debug rendering.
+    Render the live market summary.
     """
-
-    st.success("✅ Market Summary Component Loaded")
 
     cols = st.columns(6)
 
-    labels = [
-        "NIFTY",
-        "BANK",
-        "VIX",
-        "PCR",
-        "FUTURES",
-        "MARKET",
-    ]
+    # -------------------------------------------------
+    # NIFTY
+    # -------------------------------------------------
 
-    for col, label in zip(cols, labels):
-        with col:
-            st.metric(
-                label=label,
-                value="--",
-            )
+    with cols[0]:
+
+        st.metric(
+            label="NIFTY",
+            value=f"{snapshot.market.spot_price:,.2f}",
+            delta=f"ATM {snapshot.market.atm_strike}",
+        )
+
+    # -------------------------------------------------
+    # PCR
+    # -------------------------------------------------
+
+    with cols[1]:
+
+        st.metric(
+            label="PCR",
+            value=f"{snapshot.market.pcr:.2f}",
+            delta=snapshot.market.expiry,
+        )
+
+    # -------------------------------------------------
+    # INDIA VIX
+    # -------------------------------------------------
+
+    with cols[2]:
+
+        st.metric(
+            label="VIX",
+            value=f"{snapshot.india_vix:.2f}",
+            delta="India VIX",
+        )
+
+    # -------------------------------------------------
+    # FUTURES
+    # -------------------------------------------------
+
+    with cols[3]:
+
+        st.metric(
+            label="FUTURES",
+            value="LIVE",
+            delta="Coming Next",
+        )
+
+    # -------------------------------------------------
+    # MARKET
+    # -------------------------------------------------
+
+    with cols[4]:
+
+        st.metric(
+            label="MARKET",
+            value=snapshot.market_regime.regime,
+            delta=f"{snapshot.ai.confidence:.1f}% Confidence",
+        )
+
+    # -------------------------------------------------
+    # LAST UPDATE
+    # -------------------------------------------------
+
+    with cols[5]:
+
+        st.metric(
+            label="UPDATED",
+            value=snapshot.market.timestamp.strftime("%H:%M:%S"),
+            delta=snapshot.market.symbol,
+        )
+

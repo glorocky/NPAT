@@ -6,12 +6,14 @@ NPAT AI Hero Panel
 
 import streamlit as st
 
+from core.dashboard_models import DashboardSnapshot
+
 
 # =====================================================
 # Render
 # =====================================================
 
-def render() -> None:
+def render(snapshot: DashboardSnapshot) -> None:
     """
     Render the AI Hero Card.
 
@@ -19,18 +21,41 @@ def render() -> None:
     This component will later receive data from AIService.
     """
 
-    signal = "🟢 STRONG BUY"
-    confidence = "93.08%"
-    regime = "BULLISH"
-    prediction = "STRONG_BULLISH"
-    risk = "LOW"
+# -------------------------------------------------
+# Live AI Data
+# -------------------------------------------------
 
-    reasons = [
-        "Futures show Short Covering.",
-        "Premium analytics are Bullish.",
-        "Greeks indicate Positive Delta.",
-        "India VIX remains stable.",
-    ]
+    signal = snapshot.ai.signal if snapshot.ai else "N/A"
+
+    confidence = (
+        f"{snapshot.ai.confidence:.2f}%"
+        if snapshot.ai
+        else "N/A"
+    )
+
+    regime = (
+        snapshot.market_regime.regime
+        if snapshot.market_regime
+        else "N/A"
+    )
+
+    prediction = (
+        snapshot.ai.prediction.direction
+        if snapshot.ai and snapshot.ai.prediction
+        else "N/A"
+    )
+
+    risk = (
+        "LOW"
+        if snapshot.ai and snapshot.ai.confidence >= 70
+        else "MEDIUM"
+    )
+
+    reasons = (
+        snapshot.ai.reasons
+        if snapshot.ai
+        else ["AI not available."]
+    )
 
     container = st.container(border=True)
 

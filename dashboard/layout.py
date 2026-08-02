@@ -1,3 +1,4 @@
+
 """
 =========================================================
 NPAT Dashboard Layout
@@ -13,20 +14,27 @@ This module does NOT perform:
 It only renders the dashboard layout.
 =========================================================
 """
-
 import streamlit as st
-import header
-import sidebar
-from components.market_summary import (
+
+from core.dashboard_models import DashboardSnapshot
+from dashboard import header
+from dashboard import sidebar
+
+from dashboard.components.market_summary import (
     render as render_market_summary,
 )
 
-from components.ai_panel import (
+from dashboard.components.ai_panel import (
     render as render_ai_panel,
+)
+from dashboard.components.greeks_panel import (
+    render as render_greeks_panel,
 )
 
 
-def render() -> dict:
+def render(
+    snapshot: DashboardSnapshot,
+) -> dict:
     """
     Render the complete dashboard layout.
 
@@ -52,7 +60,7 @@ def render() -> dict:
     # Market Summary
     # -------------------------------------------------
 
-    render_market_summary()
+    render_market_summary(snapshot)
 
     st.write("")
 
@@ -60,7 +68,7 @@ def render() -> dict:
     # AI Panel
     # -------------------------------------------------
 
-    render_ai_panel()
+    render_ai_panel(snapshot)
 
     # -------------------------------------------------
     # Greeks / Premium
@@ -68,13 +76,17 @@ def render() -> dict:
 
     left, right = st.columns(2)
 
+    # -------------------------------------------------
+    # Greeks
+    # -------------------------------------------------
+
     with left:
 
-        st.container(border=True)
+        render_greeks_panel(snapshot)
 
-        st.subheader("📊 Greeks Summary")
-
-        st.write("Coming soon...")
+    # -------------------------------------------------
+    # Premium
+    # -------------------------------------------------
 
     with right:
 
