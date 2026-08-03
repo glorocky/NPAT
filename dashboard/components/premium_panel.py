@@ -14,6 +14,7 @@ Data Source:
 import streamlit as st
 
 from core.dashboard_models import DashboardSnapshot
+from dashboard.widgets.card import compact_kpi_card
 
 
 # =====================================================
@@ -48,17 +49,17 @@ def render(
 
     with left:
 
-        st.metric(
+        compact_kpi_card(
             "Call Market",
             f"{call.market_premium:.2f}",
         )
 
-        st.metric(
+        compact_kpi_card(
             "Call Theo",
             f"{call.forward_bs_premium:.2f}",
         )
 
-        st.metric(
+        compact_kpi_card(
             "Call Difference",
             f"{call.forward_difference_pct:.2f}%",
         )
@@ -69,24 +70,24 @@ def render(
 
     with right:
 
-        st.metric(
+        compact_kpi_card(
             "Put Market",
             f"{put.market_premium:.2f}",
         )
 
-        st.metric(
+        compact_kpi_card(
             "Put Theo",
             f"{put.forward_bs_premium:.2f}",
         )
 
-        st.metric(
+        compact_kpi_card(
             "Put Difference",
             f"{put.forward_difference_pct:.2f}%",
         )
 
     st.divider()
 
-    st.metric(
+    compact_kpi_card(
         "Relative Richness",
         f"{snapshot.relative_richness:.2f}%",
     )

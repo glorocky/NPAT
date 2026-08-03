@@ -13,6 +13,7 @@ Data Source:
 import streamlit as st
 
 from core.dashboard_models import DashboardSnapshot
+from dashboard.widgets.card import compact_kpi_card
 
 
 # =====================================================
@@ -46,22 +47,22 @@ def render(
 
     with left:
 
-        st.metric(
+        compact_kpi_card(
             "India VIX",
             f"{vix.india_vix:.2f}",
         )
 
-        st.metric(
+        compact_kpi_card(
             "Expected Move",
             f"{vix.expected_move_points:.2f}",
         )
 
-        st.metric(
+        compact_kpi_card(
             "Expected Range",
             f"{vix.expected_lower:.2f} - {vix.expected_upper:.2f}",
         )
 
-        st.metric(
+        compact_kpi_card(
             "Expected Move %",
             f"{vix.expected_move_pct:.2f}%",
         )
@@ -72,22 +73,22 @@ def render(
 
     with right:
 
-        st.metric(
+        compact_kpi_card(
             "Actual Range",
             f"{vix.actual_range:.2f}",
         )
 
-        st.metric(
+        compact_kpi_card(
             "Range Used",
             f"{vix.range_achieved_pct:.2f}%",
         )
 
-        st.metric(
+        compact_kpi_card(
             "Upside Remaining",
             f"{vix.upside_remaining:.2f}",
         )
 
-        st.metric(
+        compact_kpi_card(
             "Downside Remaining",
             f"{vix.downside_remaining:.2f}",
         )

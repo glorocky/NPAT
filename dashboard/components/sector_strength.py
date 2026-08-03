@@ -13,6 +13,7 @@ Data Source:
 import streamlit as st
 
 from core.dashboard_models import DashboardSnapshot
+from dashboard.widgets.card import compact_kpi_card
 
 
 # =====================================================
@@ -57,39 +58,61 @@ def render(
             st.markdown(
                 f"### {badge} {sector.sector}"
             )
+            # ---------------------------------
+            # Friendly Classification
+            # ---------------------------------
+
+            classification = (
+                sector.classification
+                .replace("_", " ")
+                .title()
+            )
+            
+            classification_icons = {
+                "Strong Bullish": "🟢 Strong Bullish",
+                "Bullish": "🟢 Bullish",
+                "Neutral": "🟡 Neutral",
+                "Bearish": "🔴 Bearish",
+                "Strong Bearish": "🔴 Strong Bearish",
+            }
+
+            classification = classification_icons.get(
+                classification,
+                classification,
+            )            
 
             left, right = st.columns(2)
 
             with left:
 
-                st.metric(
+                compact_kpi_card(
                     "Strength Score",
                     f"{sector.strength_score:.1f}",
                 )
 
-                st.metric(
+                compact_kpi_card(
                     "Breadth",
                     f"{sector.breadth_pct:.1f}%",
                 )
 
-                st.metric(
+                compact_kpi_card(
                     "Classification",
                     sector.classification,
                 )
 
             with right:
 
-                st.metric(
+                compact_kpi_card(
                     "Avg Change",
                     f"{sector.average_change_pct:.2f}%",
                 )
 
-                st.metric(
+                compact_kpi_card(
                     "Leader",
                     sector.strongest_symbol,
                 )
 
-                st.metric(
+                compact_kpi_card(
                     "Laggard",
                     sector.weakest_symbol,
                 )

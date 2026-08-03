@@ -7,6 +7,7 @@ Market Summary Component
 
 import streamlit as st
 from core.dashboard_models import DashboardSnapshot
+from dashboard.widgets.card import kpi_card
 
 
 # =====================================================
@@ -69,83 +70,109 @@ def _card(
 # =====================================================
 
 def render(
-    snapshot: DashboardSnapshot,
-):
-    """
-    Render the live market summary.
-    """
+        snapshot: DashboardSnapshot,
+    ):
+        """
+        Render the live market summary.
+        """
 
-    cols = st.columns(6)
+        cols = st.columns(6)
 
-    # -------------------------------------------------
-    # NIFTY
-    # -------------------------------------------------
+        # -------------------------------------------------
+        # NIFTY
+        # -------------------------------------------------
 
-    with cols[0]:
+        with cols[0]:
 
-        st.metric(
-            label="NIFTY",
-            value=f"{snapshot.market.spot_price:,.2f}",
-            delta=f"ATM {snapshot.market.atm_strike}",
-        )
+            kpi_card(
+                title="NIFTY",
+                value=f"{snapshot.market.spot_price:,.2f}",
+                subtitle=f"ATM {snapshot.market.atm_strike}",
+            )
 
-    # -------------------------------------------------
-    # PCR
-    # -------------------------------------------------
+        # -------------------------------------------------
+        # PCR
+        # -------------------------------------------------
 
-    with cols[1]:
+        with cols[1]:
 
-        st.metric(
-            label="PCR",
-            value=f"{snapshot.market.pcr:.2f}",
-            delta=snapshot.market.expiry,
-        )
+            kpi_card(
+                title="PCR",
+                value=f"{snapshot.market.pcr:.2f}",
+                subtitle=snapshot.market.expiry,
+            )
 
-    # -------------------------------------------------
-    # INDIA VIX
-    # -------------------------------------------------
+        # -------------------------------------------------
+        # INDIA VIX
+        # -------------------------------------------------
 
-    with cols[2]:
+        with cols[2]:
 
-        st.metric(
-            label="VIX",
-            value=f"{snapshot.india_vix:.2f}",
-            delta="India VIX",
-        )
+            kpi_card(
+                title="INDIA VIX",
+                value=f"{snapshot.india_vix:.2f}",
+                subtitle="Volatility Index",
+            )
 
-    # -------------------------------------------------
-    # FUTURES
-    # -------------------------------------------------
+        # -------------------------------------------------
+        # FUTURES
+        # -------------------------------------------------
 
-    with cols[3]:
+        with cols[3]:
 
-        st.metric(
-            label="FUTURES",
-            value="LIVE",
-            delta="Coming Next",
-        )
+            futures = snapshot.futures
 
-    # -------------------------------------------------
-    # MARKET
-    # -------------------------------------------------
+            if futures:
 
-    with cols[4]:
+                basis = f"{futures.basis:+.2f}"
 
-        st.metric(
-            label="MARKET",
-            value=snapshot.market_regime.regime,
-            delta=f"{snapshot.ai.confidence:.1f}% Confidence",
-        )
+                kpi_card(
+                    title="FUTURES",
+                    value=f"{futures.futures_price:,.2f}",
+                    subtitle=f"Basis {basis}",
+                )
 
-    # -------------------------------------------------
-    # LAST UPDATE
-    # -------------------------------------------------
+            else:
 
-    with cols[5]:
+                kpi_card(
+                    title="FUTURES",
+                    value="--",
+                    subtitle="No Data",
+                )
 
-        st.metric(
-            label="UPDATED",
-            value=snapshot.market.timestamp.strftime("%H:%M:%S"),
-            delta=snapshot.market.symbol,
-        )
+        # -------------------------------------------------
+        # MARKET
+        # -------------------------------------------------
+
+        with cols[4]:
+
+            regime = (
+                snapshot.market_regime.regime
+                if snapshot.market_regime
+                else "UNKNOWN"
+            )
+
+            confidence = (
+                f"{snapshot.ai.confidence:.1f}% Confidence"
+                if snapshot.ai
+                else "No AI"
+            )
+
+            kpi_card(
+                title="MARKET",
+                value=regime,
+                subtitle=confidence,
+            )
+
+        # -------------------------------------------------
+        # LAST UPDATE
+        # -------------------------------------------------
+
+        with cols[5]:
+
+            kpi_card(
+                title="UPDATED",
+                value=snapshot.market.timestamp.strftime("%H:%M:%S"),
+                subtitle=snapshot.market.symbol,
+            )
 
