@@ -402,3 +402,68 @@ dashboard/
     ├── option_chain.py
     ├── sector_strength.py
     └── vix_panel.py
+
+
+                         Paper Trading Engine
+
+                              │
+                              ▼
+
+                    ┌─────────────────────┐
+                    │       Enums         │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │       Models        │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │ PaperTradeStorage   │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │ Position Manager    │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │   Paper Broker      │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │   Trade Manager     │
+                    └─────────────────────┘
+
+                    NPAT Paper Trading Engine
+
+                           AI Engine
+                               │
+                               ▼
+                        Trade Manager
+                               │
+               ┌───────────────┼───────────────┐
+               ▼               ▼               ▼
+        Paper Broker     Position Manager   Performance Engine
+               │                               │
+               ▼                               ▼
+       PaperTradeStorage               TradeStatistics
+               │
+               ▼
+        paper_trades.json
+
+paper_trading/
+
+├── __init__.py
+├── enums.py
+├── models.py
+├── storage.py
+├── position_manager.py
+├── paper_broker.py
+├── trade_manager.py
+├── performance.py
+├── trade_journal.py      (Reserved)
+└── utils.py              (Reserved)

@@ -1,0 +1,26 @@
+[
+    {
+        "trade_id": "3215c2ed-5fe2-4068-a715-8270c242b57c",
+        "symbol": "NIFTY",
+        "exchange": "NSE",
+        "side": "BUY",
+        "order_type": "MARKET",
+        "source": "AI",
+        "quantity": 50,
+        "entry_price": 25000,
+        "current_price": 25000,
+        "exit_price": 0.0,
+        "stop_loss": 0.0,
+        "target": 0.0,
+        "entry_time": "2026-08-06 03:45:48.980292+00:00",
+        "exit_time": null,
+        "status": "OPEN",
+        "exit_reason": null,
+        "unrealized_pnl": 0.0,
+        "realized_pnl": 0.0,
+        "ai_confidence": 0.0,
+        "ai_recommendation": "HOLD",
+        "ai_reason": "",
+        "notes": ""
+    }
+]

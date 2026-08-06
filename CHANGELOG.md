@@ -144,3 +144,67 @@ Every provider will use:
 - Git repository
 - Basic service skeleton
 - Initial AI folder
+
+# NPAT Changelog
+
+All notable changes to the NIFTY Professional AI Terminal (NPAT)
+are documented here.
+
+---
+
+# v0.5.0 (Current)
+
+## Professional Dashboard
+
+### Added
+
+- Professional Market Dashboard
+- AI Decision Panel
+- Greeks Summary
+- Premium Analysis
+- Futures Analysis
+- India VIX Analytics
+- Sector Strength Analytics
+- Market Heatmap
+- Live Option Chain
+- Reusable Dashboard Widgets
+- KPI Cards
+- Compact KPI Cards
+- Section Components
+- Status Badges
+- Table Widgets
+
+### Improved
+
+- Professional UI layout
+- Compact analytics cards
+- Consistent typography
+- Dashboard density
+- Market readability
+
+---
+
+# v0.3.0
+
+## Analytics Engine
+
+### Added
+
+- Provider abstraction
+- Market Service
+- Analytics Engine
+- AI Decision Layer
+- Prediction Engine
+
+---
+
+# v0.2.0
+
+## Infrastructure
+
+### Added
+
+- Project architecture
+- Configuration
+- Logging
+- Base provider
