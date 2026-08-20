@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from ai.decision_engine import DecisionEngine
 from ai.prediction_engine import PredictionEngine
+from ai.option_selector import OptionSelector
 
 from core.models import (
     AIAnalysis,
@@ -106,6 +107,42 @@ class AIService:
                 premiums=dashboard.premium_analysis,
             )
         )
+        
+        # -------------------------------------------------
+        # Option Trading Direction
+        # -------------------------------------------------
+
+        direction = (
+            prediction.direction.upper()
+            if prediction
+            else decision.market_regime.upper()
+        )
+
+        if direction == "BULLISH":
+            option_type = "CE"
+            trade_action = "BUY_CE"
+
+        elif direction == "BEARISH":
+            option_type = "PE"
+            trade_action = "BUY_PE"
+
+        else:
+            option_type = "NONE"
+            trade_action = "NO_TRADE"
+
+        # -------------------------------------------------
+        # Option Trade Selection
+        # -------------------------------------------------
+
+        recommendation = OptionSelector.select(
+            symbol=dashboard.market.symbol,
+            expiry=dashboard.market.expiry,
+            spot_price=dashboard.market.spot_price,
+            atm_strike=dashboard.market.atm_strike,
+            options=dashboard.market.option_chain,
+            signal=decision.signal,
+            confidence=decision.confidence,
+        )
 
         # -------------------------------------------------
         # Final AI Result
@@ -118,6 +155,8 @@ class AIService:
 
             decision=decision,
             prediction=prediction,
+
+            recommendation=recommendation,
 
             reasons=decision.reasons,
         )

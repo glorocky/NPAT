@@ -26,6 +26,18 @@ def render(snapshot: DashboardSnapshot) -> None:
 # -------------------------------------------------
 
     signal = snapshot.ai.signal if snapshot.ai else "N/A"
+    
+    decision = (
+    snapshot.ai.decision
+    if snapshot.ai
+    else None
+)
+
+    option_action = (
+        decision.option_action
+        if decision
+        else "N/A"
+    )
 
     confidence = (
         f"{snapshot.ai.confidence:.2f}%"
@@ -43,6 +55,18 @@ def render(snapshot: DashboardSnapshot) -> None:
         snapshot.ai.prediction.direction
         if snapshot.ai and snapshot.ai.prediction
         else "N/A"
+    )
+    
+    option_type = (
+        snapshot.ai.option_type
+        if snapshot.ai
+        else "NONE"
+    )
+
+    trade_action = (
+        snapshot.ai.trade_action
+        if snapshot.ai
+        else "NO_TRADE"
     )
 
     risk = (
@@ -71,19 +95,42 @@ def render(snapshot: DashboardSnapshot) -> None:
 
         with left:
 
-            st.markdown(
+             st.markdown(
                 f"""
-### {signal}
+    ### {signal}
 
-| Metric | Value |
-|--------|-------|
-| Confidence | **{confidence}** |
-| Market Regime | **{regime}** |
-| Prediction | **{prediction}** |
-| Risk | **{risk}** |
-                """
-            )
+    | Metric | Value |
+    |--------|-------|
+    | Confidence | **{confidence}** |
+    | Market Regime | **{regime}** |
+    | Prediction | **{prediction}** |
+    | Option Action | **{option_action}** |
+    | Risk | **{risk}** |
+                    """
+                )
+             
+        # -----------------------------------------
+        # Actionable Option Direction
+        # -----------------------------------------
+                
+        if trade_action == "BUY_CE":
 
+                st.success(
+                    "🎯 TRADE DIRECTION: BUY CALL (CE)"
+                )
+
+        elif trade_action == "BUY_PE":
+
+                st.error(
+                    "🎯 TRADE DIRECTION: BUY PUT (PE)"
+                )
+
+        else:
+
+                st.warning(
+                    "🎯 TRADE DIRECTION: NO TRADE"
+                )
+        
         # -----------------------------------------
         # Right
         # -----------------------------------------

@@ -36,6 +36,12 @@ from paper_trading.storage import (
     PaperTradeStorage,
 )
 
+from paper_trading.enums import (
+    TradeSide,
+    TradeSource,
+    ExitReason,
+)
+
 # =========================================================
 # Trade Manager
 # =========================================================
@@ -80,6 +86,25 @@ class TradeManager:
             target=target,
             source=source,
         )
+        
+    # =====================================================
+    # Update Market Price
+    # =====================================================
+
+    def update_market_price(
+        self,
+        trade_id: str,
+        price: float,
+    ) -> PaperTrade:
+        """
+        Update the current market price of an open trade.
+        """
+
+        return self.broker.update_market_price(
+            trade_id=trade_id,
+            price=price,
+        )
+    
     # =====================================================
     # Get Trade
     # =====================================================
@@ -107,3 +132,23 @@ class TradeManager:
         """
 
         return self.storage.get_open_trades()
+    
+    # =====================================================
+    # Close Trade
+    # =====================================================
+
+    def close_trade(
+        self,
+        trade_id: str,
+        price: float,
+        exit_reason: ExitReason = ExitReason.MANUAL,
+    ) -> PaperTrade:
+        """
+        Close an existing paper trade.
+        """
+
+        return self.broker.close_order(
+            trade_id=trade_id,
+            price=price,
+            exit_reason=exit_reason,
+        )

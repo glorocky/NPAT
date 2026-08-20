@@ -50,9 +50,33 @@ from dashboard.components.option_chain import (
     render as render_option_chain,
 )
 
+from dashboard.components.paper_summary import (
+    render as render_paper_summary,
+)
+from dashboard.components.paper_positions import (
+    render as render_paper_positions,
+)
+from dashboard.components.paper_statistics import (
+    render as render_paper_statistics,
+)
+
+from dashboard.components.paper_history import (
+    render as render_paper_history,
+)
+from dashboard.components.paper_controls import (
+    render as render_paper_controls,
+)
+
+from services.paper_trading_service import (
+    PaperTradingService,
+)
+
 
 def render(
     snapshot: DashboardSnapshot,
+    market_service,
+    paper_service: PaperTradingService,
+    settings: dict,
 ) -> dict:
     """
     Render the complete dashboard layout.
@@ -63,11 +87,6 @@ def render(
         User settings from the sidebar.
     """
 
-    # -------------------------------------------------
-    # Sidebar
-    # -------------------------------------------------
-
-    settings = sidebar.render()
 
     # -------------------------------------------------
     # Header
@@ -88,6 +107,76 @@ def render(
     # -------------------------------------------------
 
     render_ai_panel(snapshot)
+    
+    # -------------------------------------------------
+    # Paper Trading Controls
+    # -------------------------------------------------
+
+    paper_controls = st.container(
+        border=True,
+    )
+
+    with paper_controls:
+
+        render_paper_controls(
+            paper_service,
+        )
+    
+    # -------------------------------------------------
+    # Paper Trading Summary
+    # -------------------------------------------------
+
+    paper_summary = st.container(
+        border=True,
+    )
+
+    with paper_summary:
+
+        render_paper_summary(
+            paper_service,
+        )
+    
+    # -------------------------------------------------
+    # Paper Trading Positions
+    # -------------------------------------------------
+
+    paper_positions = st.container(
+        border=True,
+    )
+
+    with paper_positions:
+
+        render_paper_positions(
+            paper_service,
+        )
+        
+    # -------------------------------------------------
+    # Paper Trading Statistics
+    # -------------------------------------------------
+
+    paper_statistics = st.container(
+        border=True,
+    )
+
+    with paper_statistics:
+
+        render_paper_statistics(
+             paper_service,
+        )
+        
+    # -------------------------------------------------
+    # Paper Trading History
+    # -------------------------------------------------
+
+    paper_history = st.container(
+        border=True,
+    )
+
+    with paper_history:
+
+        render_paper_history(
+            paper_service,
+        )
 
     # -------------------------------------------------
     # Greeks / Premium

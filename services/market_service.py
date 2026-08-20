@@ -116,16 +116,49 @@ class MarketService:
                     f"No active expiry available for {symbol}."
                 )
 
-            expiry = active[0]
-                                
-        # -----------------------------
-        # Option Chain
-        # -----------------------------
-        options: list[OptionData] = self.provider.get_option_chain(
-            exchange=exchange,
-            symbol=symbol,
-            expiry=expiry,
-        )
+            # -------------------------------------------------
+            # Find first expiry with a usable option chain
+            # -------------------------------------------------
+
+            options: list[OptionData] = []
+            selected_expiry: str | None = None
+
+            for candidate_expiry in active:
+
+                try:
+
+                    candidate_options = (
+                        self.provider.get_option_chain(
+                            exchange=exchange,
+                            symbol=symbol,
+                            expiry=candidate_expiry,
+                        )
+                    )
+
+                except Exception:
+                    continue
+
+                if candidate_options:
+
+                    options = candidate_options
+                    selected_expiry = candidate_expiry
+                    break
+
+            if selected_expiry is None:
+                raise RuntimeError(
+                    f"No usable option chain available for "
+                    f"{symbol}."
+                )
+
+            expiry = selected_expiry
+
+        else:
+
+            options = self.provider.get_option_chain(
+                exchange=exchange,
+                symbol=symbol,
+                expiry=expiry,
+            )
         
         # -----------------------------
         # OI / Price Snapshot
@@ -409,6 +442,28 @@ class MarketService:
             dashboard.prediction = dashboard.ai.prediction
 
         return dashboard
+    
+    # =====================================================
+    # Latest Quote
+    # =====================================================
+
+    def get_quote(
+        self,
+        symbol: str,
+        exchange: str = "NSE",
+        segment: str = "CASH",
+    ):
+        """
+        Return the latest market quote for a symbol.
+
+        Delegates quote retrieval to the configured provider.
+        """
+
+        return self.provider.get_quote(
+            trading_symbol=symbol,
+            exchange=exchange,
+            segment=segment,
+        )
 
     def refresh(
         self,

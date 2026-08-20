@@ -20,8 +20,10 @@ Responsibilities:
 from __future__ import annotations
 
 from paper_trading.enums import (
+    ExitReason,
     PositionState,
     TradeSide,
+    TradeStatus,
 )
 
 from paper_trading.models import (
@@ -77,6 +79,56 @@ class PositionManager:
             trade.entry_price
             - trade.current_price
         ) * trade.quantity
+        
+    # =====================================================
+    # Check Stop Loss / Target
+    # =====================================================
+
+    @staticmethod
+    def check_exit_condition(
+        trade: PaperTrade,
+    ) -> ExitReason | None:
+        """
+        Check whether an open trade has reached
+        its Stop Loss or Target.
+        """
+
+        if trade.status != TradeStatus.OPEN:
+            return None
+
+        price = trade.current_price
+
+        # BUY position
+        if trade.side == TradeSide.BUY:
+
+            if (
+                trade.stop_loss > 0
+                and price <= trade.stop_loss
+            ):
+                return ExitReason.STOPLOSS
+
+            if (
+                trade.target > 0
+                and price >= trade.target
+            ):
+                return ExitReason.TARGET
+
+        # SELL position
+        else:
+
+            if (
+                trade.stop_loss > 0
+                and price >= trade.stop_loss
+            ):
+                return ExitReason.STOPLOSS
+
+            if (
+                trade.target > 0
+                and price <= trade.target
+            ):
+                return ExitReason.TARGET
+
+        return None
 
     # =====================================================
     # Position

@@ -1,0 +1,14 @@
+[
+    {
+        "trade_id": "d072b8bc-e602-4bf0-afa8-bfbb1f7c2442",
+        "timestamp": "2026-08-17 19:40:07.570868+00:00",
+        "event": "TRADE_OPENED",
+        "description": "Manual BUY opened at \u20b9100.00, quantity 1."
+    },
+    {
+        "trade_id": "d072b8bc-e602-4bf0-afa8-bfbb1f7c2442",
+        "timestamp": "2026-08-17 19:45:56.652545+00:00",
+        "event": "TRADE_CLOSED",
+        "description": "Trade closed at \u20b9100.00. Reason: MANUAL. Realized P&L: \u20b90.00."
+    }
+]

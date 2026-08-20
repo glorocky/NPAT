@@ -467,3 +467,117 @@ paper_trading/
 ├── performance.py
 ├── trade_journal.py      (Reserved)
 └── utils.py              (Reserved)
+
+Phase 1 — Dashboard Foundation
+dashboard/
+│
+├── components/
+│      ├── paper_summary.py
+│      ├── paper_positions.py
+│      ├── paper_orders.py
+│      ├── paper_statistics.py
+│      └── paper_controls.py
+│
+└── layout.py
+
+Phase 2 — Portfolio Summary
+Account Balance
+Available Cash
+Today's P&L
+Total P&L
+Win Rate
+Open Positions
+Open Trades
+Closed Trades
+
+Phase 3 — Live Position Table
+Symbol
+Side
+Qty
+Entry
+LTP
+MTM
+Status
+
+Phase 4 — Trade History
+Time
+Symbol
+Side
+Qty
+Entry
+Exit
+P&L
+Reason
+
+Phase 5 — Controls
+🟢 BUY
+🔴 SELL
+❌ Close Trade
+🔄 Reset Account
+
+Phase 6 — AI Integration
+DecisionEngine
+        │
+PredictionEngine
+        │
+TradeManager
+        │
+PaperBroker
+        │
+Dashboard
+
+One click:
+
+AI Signal
+↓
+Paper Trade
+↓
+Live Position
+↓
+Performance Update
+
+Sprint 7 Development Order We'll build in this sequence:
+1. Paper Summary
+        ↓
+2. Open Positions
+        ↓
+3. Trade History
+        ↓
+4. Statistics
+        ↓
+5. Controls
+        ↓
+6. AI Integration
+
+🌟 Where We Stand
+Sprint 1   ✅ Infrastructure
+
+Sprint 2   ✅ Providers
+
+Sprint 3   ✅ Analytics
+
+Sprint 4   ✅ AI
+
+Sprint 5   ✅ Dashboard
+
+Sprint 6   ✅ Paper Trading Backend
+
+Sprint 7   🚧 Paper Trading Dashboard
+
+Sprint 8   ⏳ Live Trading
+
+                    PAPER TRADING ENGINE
+                           │
+        ┌──────────────────┼──────────────────┐
+        ▼                  ▼                  ▼
+   Risk Controls       Execution          Analytics
+        │                  │                  │
+   Daily Loss          PaperBroker       Statistics
+   Max Trades          TradeManager      Dashboard
+   Max Exposure        PositionManager   History
+        │                  │
+        └──────────────────┼──────────────────┘
+                           ▼
+                    Persistent Storage
+                           │
+                      JSON Repository

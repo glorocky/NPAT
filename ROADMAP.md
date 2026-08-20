@@ -17,3 +17,8 @@
 ✅ Capital Protection First
 
 ✅ Explain every signal
+
+streamlit run dashboard\app_old.py
+
+streamlit run dashboard\app_old.py
+python -m streamlit run dashboard\app_old.py

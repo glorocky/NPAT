@@ -1014,8 +1014,10 @@ class MarketRegimeAnalysis:
 @dataclass
 class DecisionAnalysis:
     """
-    Deterministic NPAT trading decision produced from
-    analyzed market evidence.
+    Deterministic NPAT trading decision.
+
+    Converts market direction into an actionable
+    option-side recommendation.
     """
 
     signal: str
@@ -1029,7 +1031,53 @@ class DecisionAnalysis:
     bearish_evidence: int
     neutral_evidence: int
 
-    reasons: tuple[str, ...]
+    # =================================================
+    # Option Decision
+    # =================================================
+
+    option_action: str = "WAIT"
+
+    option_type: str = "NONE"
+
+    recommendation: str = "WAIT"
+
+    reasons: tuple[str, ...] = ()
+    
+# =========================================================
+# Option Trade Recommendation
+# =========================================================
+
+@dataclass(frozen=True, slots=True)
+class OptionTradeRecommendation:
+    """
+    Directional option trade selected by the NPAT AI layer.
+
+    The first paper-trading implementation uses
+    long options only:
+
+        BULLISH -> BUY CALL
+        BEARISH -> BUY PUT
+    """
+
+    action: str
+
+    option_type: str
+
+    symbol: str
+
+    expiry: str
+
+    strike_price: int
+
+    entry_price: float
+
+    spot_price: float
+
+    confidence: float
+
+    signal: str
+
+    reason: str
     
 # =========================================================
 # AIService
@@ -1040,9 +1088,8 @@ class AIAnalysis:
     """
     Final AI-layer analysis exposed to MarketService.
 
-    Combines the deterministic decision layer with
-    predictive confirmation while preserving the
-    MarketService AI contract.
+    Combines deterministic decision, predictive
+    confirmation and the selected option trade.
     """
 
     signal: str
@@ -1053,7 +1100,17 @@ class AIAnalysis:
 
     prediction: "PredictionAnalysis | None" = None
 
+    recommendation: "OptionTradeRecommendation | None" = None
+
     reasons: tuple[str, ...] = ()
+
+    # =================================================
+    # Option Trading Decision
+    # =================================================
+
+    option_type: str = "NONE"
+
+    trade_action: str = "NO_TRADE"
     
 # =========================================================
 # Prediction Analysis
@@ -1085,3 +1142,8 @@ class PredictionAnalysis:
     neutral_evidence: int
 
     reasons: tuple[str, ...]
+    option_action: str = "N/A"
+    option_strike: int | None = None
+    option_premium: float | None = None
+    option_theoretical_premium: float | None = None
+    option_premium_difference_pct: float | None = None

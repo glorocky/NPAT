@@ -64,6 +64,17 @@ DEFAULT_THEME = "dark"
 
 DEFAULT_TIMEFRAME = "1m"
 
+# =========================================================
+# PAPER TRADING SETTINGS
+# =========================================================
+
+PAPER_TRADING_INITIAL_CAPITAL = 1_000_000.0
+
+PAPER_TRADING_MAX_DAILY_LOSS = 10_000.0
+
+PAPER_TRADING_MAX_OPEN_TRADES = 3
+
+PAPER_TRADING_MAX_CAPITAL_EXPOSURE_PCT = 80.0
 
 # =========================================================
 # MARKET SETTINGS

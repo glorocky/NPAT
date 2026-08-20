@@ -208,3 +208,18 @@ are documented here.
 - Configuration
 - Logging
 - Base provider
+
+## v0.6.0 - Sprint 6
+
+### Added
+
+- Paper Trading Engine
+- Paper Broker
+- Trade Manager
+- Position Manager
+- Performance Engine
+- JSON Trade Storage
+
+### Testing
+
+- 30 Unit Tests Passing

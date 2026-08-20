@@ -246,6 +246,8 @@ class TradeStatistics:
     winning_trades: int = 0
 
     losing_trades: int = 0
+    
+    breakeven_trades: int = 0
 
     win_rate: float = 0.0
 
@@ -268,3 +270,29 @@ class TradeStatistics:
     expectancy: float = 0.0
 
     max_drawdown: float = 0.0
+
+# =========================================================
+# Dashboard Summary
+# =========================================================
+
+@dataclass(slots=True)
+class DashboardSummary:
+    """
+    Summary displayed on the Paper Trading Dashboard..
+    """
+
+    account_balance: float = 0.0
+
+    available_cash: float = 0.0
+
+    open_positions: int = 0
+
+    open_trades: int = 0
+
+    closed_trades: int = 0
+
+    today_pnl: float = 0.0
+
+    total_pnl: float = 0.0
+
+    win_rate: float = 0.0
