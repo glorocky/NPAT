@@ -103,7 +103,7 @@ assert decision.bullish_evidence == 3
 assert decision.bearish_evidence == 0
 assert decision.neutral_evidence == 0
 
-assert len(decision.reasons) == 3
+assert len(decision.reasons) == 4
 
 
 # =====================================================

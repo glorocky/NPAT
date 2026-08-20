@@ -1,167 +1,66 @@
-"""
-=========================================================
-NPAT - Option Selector
-=========================================================
-
-Converts the AI directional signal into a concrete
-option trade recommendation.
-
-Initial paper-trading policy:
-
-    BULLISH / BUY  -> BUY CALL
-    BEARISH / SELL -> BUY PUT
-
-The selector does not place orders.
-It only produces a recommendation.
-=========================================================
-"""
+"""NPAT AI option contract selector."""
 
 from __future__ import annotations
 
-from core.models import (
-    OptionData,
-    OptionTradeRecommendation,
-)
+from datetime import datetime
+
+from ai.zero_to_hero import _is_valid_contract, is_zero_to_hero_window, parse_expiry_date, rank_candidates
+from core.models import OptionData, OptionTradeRecommendation
 
 
 class OptionSelector:
-    """
-    Select a directional option contract from the
-    completed dashboard snapshot.
-    """
+    """Select a validated CE/PE contract without placing an order."""
 
-    # =====================================================
-    # Public API
-    # =====================================================
+    @staticmethod
+    def _no_trade(*, symbol: str, expiry: str, spot_price: float, atm_strike: int,
+                  confidence: float, signal: str, reason: str) -> OptionTradeRecommendation:
+        return OptionTradeRecommendation(
+            action="NO TRADE", option_type="", symbol=symbol, expiry=expiry,
+            strike_price=atm_strike, entry_price=0.0, spot_price=float(spot_price),
+            confidence=float(confidence), signal=signal, reason=reason,
+        )
 
     @classmethod
-    def select(
-        cls,
-        *,
-        symbol: str,
-        expiry: str,
-        spot_price: float,
-        atm_strike: int,
-        options: list[OptionData],
-        signal: str,
-        confidence: float,
-    ) -> OptionTradeRecommendation:
-        """
-        Select the ATM option corresponding to the
-        current directional AI signal.
-        """
+    def select(cls, *, symbol: str, expiry: str, spot_price: float, atm_strike: int,
+               options: list[OptionData], signal: str, confidence: float,
+               premium_analysis=None, current_time: datetime | None = None) -> OptionTradeRecommendation:
+        normalized_signal = signal.upper().strip()
+        if normalized_signal in {"BUY", "STRONG_BUY"}:
+            option_type, action = "CE", "BUY CALL"
+        elif normalized_signal in {"SELL", "STRONG_SELL"}:
+            option_type, action = "PE", "BUY PUT"
+        else:
+            return cls._no_trade(symbol=symbol, expiry=expiry, spot_price=spot_price, atm_strike=atm_strike,
+                confidence=confidence, signal=normalized_signal,
+                reason="AI signal is NEUTRAL. No directional option trade selected.")
 
         if not options:
-            raise ValueError(
-                "Option chain cannot be empty."
-            )
+            return cls._no_trade(symbol=symbol, expiry=expiry, spot_price=spot_price, atm_strike=atm_strike,
+                confidence=confidence, signal=normalized_signal,
+                reason="Option chain is unavailable; no contract was selected.")
 
-        normalized_signal = signal.upper().strip()
+        expiry_is_valid = parse_expiry_date(expiry) is not None
+        if is_zero_to_hero_window(expiry, current_time):
+            candidate = rank_candidates(options=options, atm_strike=atm_strike, option_type=option_type,
+                premium_analysis=premium_analysis, max_otm_strikes=3)
+            if candidate:
+                return OptionTradeRecommendation(
+                    action=action, option_type=option_type, symbol=symbol, expiry=expiry,
+                    strike_price=candidate.strike_price, entry_price=candidate.market_premium,
+                    spot_price=float(spot_price), confidence=float(confidence), signal=normalized_signal,
+                    reason=f"{candidate.reason} Selected during the 13:00–13:30 IST expiry window.")
 
-        # -------------------------------------------------
-        # Direction -> Option Type
-        # -------------------------------------------------
+        atm_option = next((option for option in options if option.strike_price == atm_strike), None)
+        if atm_option is None or not _is_valid_contract(atm_option, option_type):
+            return cls._no_trade(symbol=symbol, expiry=expiry, spot_price=spot_price, atm_strike=atm_strike,
+                confidence=confidence, signal=normalized_signal,
+                reason="No valid, liquid ATM contract is available for the AI direction.")
 
-        if normalized_signal in {
-            "BUY",
-            "STRONG_BUY",
-        }:
-            option_type = "CE"
-            action = "BUY CALL"
-
-        elif normalized_signal in {
-            "SELL",
-            "STRONG_SELL",
-        }:
-            option_type = "PE"
-            action = "BUY PUT"
-
-        else:
-            return OptionTradeRecommendation(
-                action="NO TRADE",
-                option_type="",
-                symbol=symbol,
-                expiry=expiry,
-                strike_price=atm_strike,
-                entry_price=0.0,
-                spot_price=float(spot_price),
-                confidence=float(confidence),
-                signal=normalized_signal,
-                reason=(
-                    "AI signal is NEUTRAL. "
-                    "No directional option trade selected."
-                ),
-            )
-
-        # -------------------------------------------------
-        # Find ATM Contract
-        # -------------------------------------------------
-
-        atm_option = next(
-            (
-                option
-                for option in options
-                if option.strike_price == atm_strike
-            ),
-            None,
-        )
-
-        if atm_option is None:
-            raise ValueError(
-                f"ATM strike {atm_strike} "
-                "was not found in the option chain."
-            )
-
-        # -------------------------------------------------
-        # Select Market Premium
-        # -------------------------------------------------
-
-        if option_type == "CE":
-            entry_price = float(
-                atm_option.call_ltp
-            )
-        else:
-            entry_price = float(
-                atm_option.put_ltp
-            )
-
-        if entry_price <= 0:
-            raise ValueError(
-                f"Invalid {option_type} LTP "
-                f"for ATM strike {atm_strike}: "
-                f"{entry_price}"
-            )
-
-        # -------------------------------------------------
-        # Reason
-        # -------------------------------------------------
-
-        if option_type == "CE":
-            reason = (
-                f"AI signal is {normalized_signal}. "
-                f"Market direction is bullish, so "
-                f"ATM {atm_strike} CALL is selected."
-            )
-        else:
-            reason = (
-                f"AI signal is {normalized_signal}. "
-                f"Market direction is bearish, so "
-                f"ATM {atm_strike} PUT is selected."
-            )
-
-        # -------------------------------------------------
-        # Recommendation
-        # -------------------------------------------------
-
+        entry_price = float(atm_option.call_ltp if option_type == "CE" else atm_option.put_ltp)
+        expiry_note = "" if expiry_is_valid else " Expiry format was not recognised; normal ATM selection was used."
         return OptionTradeRecommendation(
-            action=action,
-            option_type=option_type,
-            symbol=symbol,
-            expiry=expiry,
-            strike_price=atm_strike,
-            entry_price=entry_price,
-            spot_price=float(spot_price),
-            confidence=float(confidence),
-            signal=normalized_signal,
-            reason=reason,
-        )
+            action=action, option_type=option_type, symbol=symbol, expiry=expiry,
+            strike_price=atm_strike, entry_price=entry_price, spot_price=float(spot_price),
+            confidence=float(confidence), signal=normalized_signal,
+            reason=(f"AI signal is {normalized_signal}; validated ATM {atm_strike} "
+                    f"{'CALL' if option_type == 'CE' else 'PUT'} is selected.{expiry_note}"))

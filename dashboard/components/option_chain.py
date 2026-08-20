@@ -70,12 +70,6 @@ def render(
     atm = market.atm_strike
 
     # -----------------------------------------------------
-    # Premium Analytics Lookup
-    # -----------------------------------------------------
-
-    premium_map = _premium_map(snapshot)
-
-    # -----------------------------------------------------
     # Sort Option Chain
     # -----------------------------------------------------
 
@@ -114,22 +108,8 @@ def render(
     window = option_chain[start:end]
     
     
-    # -----------------------------------------
-    # Black-Scholes premium lookup
-    # -----------------------------------------
-
-    premium_lookup = {}
-
-    if snapshot.premium_analysis:
-
-        for premium in snapshot.premium_analysis:
-
-            key = (
-                premium.strike_price,
-                premium.option_type.upper(),
-            )
-
-            premium_lookup[key] = premium
+    premium_lookup = _premium_map(snapshot)
+    recommendation = snapshot.ai.recommendation if snapshot.ai else None
 
     # -----------------------------------------------------
     # Header
@@ -144,9 +124,9 @@ def render(
     headers[0].markdown("**Call OI**")
     headers[1].markdown("**Call LTP**")
     headers[2].markdown("**Call BS**")
-    headers[3].markdown("**Call Δ**")
+    headers[3].markdown("**Call IV**")
     headers[4].markdown("**Strike**")
-    headers[5].markdown("**Put Δ**")
+    headers[5].markdown("**Put IV**")
     headers[6].markdown("**Put BS**")
     headers[7].markdown("**Put LTP**")
     headers[8].markdown("**Put OI**")
@@ -181,19 +161,24 @@ def render(
             f"{option.call_oi:,}"
         )
 
-        cols[1].write(
-            f"{option.call_ltp:.2f}"
+        call_is_selected = bool(
+            recommendation
+            and recommendation.option_type == "CE"
+            and recommendation.strike_price == option.strike_price
+        )
+        put_is_selected = bool(
+            recommendation
+            and recommendation.option_type == "PE"
+            and recommendation.strike_price == option.strike_price
         )
 
-        if call_bs:
+        call_ltp = f"{option.call_ltp:.2f}"
+        cols[1].markdown(f"**⭐ {call_ltp}**" if call_is_selected else call_ltp)
 
-            cols[2].write(
-                f"{call_bs.forward_bs_premium:.2f}"
-            )
-
+        if call_bs and call_bs.forward_bs_premium is not None:
+            cols[2].write(f"{call_bs.forward_bs_premium:.2f}")
         else:
-
-            cols[2].write("-")
+            cols[2].write("N/A")
 
         cols[3].write(
             f"{option.call_iv:.2f}"
@@ -205,9 +190,7 @@ def render(
 
         if option.strike_price == atm:
 
-            cols[4].markdown(
-                f"**🟨 {option.strike_price}**"
-            )
+            cols[4].markdown(f"**🟨 {option.strike_price}**")
 
         else:
 
@@ -223,19 +206,13 @@ def render(
             f"{option.put_iv:.2f}"
         )
 
-        if put_bs:
-
-            cols[6].write(
-                f"{put_bs.forward_bs_premium:.2f}"
-            )
-
+        if put_bs and put_bs.forward_bs_premium is not None:
+            cols[6].write(f"{put_bs.forward_bs_premium:.2f}")
         else:
+            cols[6].write("N/A")
 
-            cols[6].write("-")
-
-        cols[7].write(
-            f"{option.put_ltp:.2f}"
-        )
+        put_ltp = f"{option.put_ltp:.2f}"
+        cols[7].markdown(f"**⭐ {put_ltp}**" if put_is_selected else put_ltp)
 
         cols[8].write(
             f"{option.put_oi:,}"

@@ -279,10 +279,10 @@ class MarketService:
                 symbol=symbol,
                 options=options,
                 atm_strike=market_snapshot.atm_strike,
-                expiry=expiry,
-                risk_free_rate=RISK_FREE_RATE,
-                strikes_each_side=3,
-            )
+            expiry=expiry,
+            risk_free_rate=RISK_FREE_RATE,
+            strikes_each_side=5,
+        )
         )
         
         # -----------------------------
@@ -331,7 +331,7 @@ class MarketService:
 
         vix_quote = self.provider.get_quote(
             trading_symbol="INDIAVIX",
-            exchange=exchange,
+            exchange="NSE",
             segment="CASH",
         )
 
@@ -383,13 +383,13 @@ class MarketService:
 
         heatmap_ltp = self.provider.get_ltp_batch(
             symbols=constituent_symbols,
-            exchange=exchange,
+            exchange="NSE",
             segment="CASH",
         )
 
         heatmap_ohlc = self.provider.get_ohlc_batch(
             symbols=constituent_symbols,
-            exchange=exchange,
+            exchange="NSE",
             segment="CASH",
         )
 
