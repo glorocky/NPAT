@@ -1,0 +1,8 @@
+[
+    {
+        "trade_id": "f6d31543-1109-4f22-937c-03d17d4a6edf",
+        "timestamp": "2026-08-21 19:59:25.558655+00:00",
+        "event": "OPTION_PAPER_ORDER_OPENED",
+        "description": "Confirmed CE NIFTY26AUG25000CE @ 100.00, quantity 25."
+    }
+]

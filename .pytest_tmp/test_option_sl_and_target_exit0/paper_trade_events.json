@@ -1,0 +1,14 @@
+[
+    {
+        "trade_id": "4b64c9d0-b1ec-41cd-ab57-730547cc3e8f",
+        "timestamp": "2026-08-21 19:59:25.574302+00:00",
+        "event": "OPTION_PAPER_ORDER_OPENED",
+        "description": "Confirmed CE NIFTY26AUG25000CE @ 100.00, quantity 25."
+    },
+    {
+        "trade_id": "4b64c9d0-b1ec-41cd-ab57-730547cc3e8f",
+        "timestamp": "2026-08-21 19:59:25.574302+00:00",
+        "event": "TRADE_CLOSED",
+        "description": "Trade closed at \u20b980.00. Reason: STOPLOSS. Realized P&L: \u20b9-500.00."
+    }
+]

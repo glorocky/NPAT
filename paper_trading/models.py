@@ -66,6 +66,14 @@ class PaperTrade:
     symbol: str = ""
     exchange: str = "NSE"
 
+    # Persist exact derivative contract identity for option positions.
+    underlying_symbol: str = ""
+    expiry: str = ""
+    strike_price: int = 0
+    option_type: str = ""
+    trading_symbol: str = ""
+    lot_size: int = 0
+
     # -----------------------------------------------------
     # Trade Details
     # -----------------------------------------------------
@@ -138,6 +146,24 @@ class PaperTrade:
     # -----------------------------------------------------
 
     notes: str = ""
+
+
+@dataclass(frozen=True, slots=True)
+class OptionPaperOrderPreview:
+    """A reviewable AI option paper order; it is not an order itself."""
+
+    underlying_symbol: str
+    exchange: str
+    expiry: str
+    strike_price: int
+    option_type: str
+    trading_symbol: str
+    entry_price: float
+    lot_size: int
+    quantity: int
+    stop_loss: float
+    target: float
+    risk_reward: float
     
 # =========================================================
 # Position

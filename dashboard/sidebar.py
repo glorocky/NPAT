@@ -46,8 +46,8 @@ def render() -> dict:
     st.sidebar.success("🟢 Groww Connected")
     st.sidebar.divider()
     st.sidebar.subheader("Application")
-    st.sidebar.write("Version : v0.4.0")
-    st.sidebar.write("Sprint  : 7")
+    st.sidebar.write("Version : v1.0.0")
+    st.sidebar.write("Sprint  : 12 — Final")
 
     return {
         "symbol": symbol,

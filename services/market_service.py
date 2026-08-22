@@ -31,6 +31,7 @@ from analytics.market_regime_analytics import (
 )
 from core.dashboard_models import DashboardSnapshot
 from storage.oi_snapshot_store import OISnapshotStore
+from strategies.trade_planner import TradePlanner
 from core.models import (
     ForwardPremiumAnalysis,
     FuturesAnalysis,
@@ -373,23 +374,22 @@ class MarketService:
         # Heatmap Analytics
         # -----------------------------
 
-        constituents = (
-            ConstituentLoader.load_nifty50()
+        constituents = ConstituentLoader.load_for_index(
+            symbol=symbol,
+            exchange=exchange,
         )
 
-        constituent_symbols = (
-            constituents["symbol"].tolist()
-        )
+        constituent_symbols = constituents["symbol"].tolist()
 
         heatmap_ltp = self.provider.get_ltp_batch(
             symbols=constituent_symbols,
-            exchange="NSE",
+            exchange=exchange,
             segment="CASH",
         )
 
         heatmap_ohlc = self.provider.get_ohlc_batch(
             symbols=constituent_symbols,
-            exchange="NSE",
+            exchange=exchange,
             segment="CASH",
         )
 
@@ -424,14 +424,54 @@ class MarketService:
         # -----------------------------
         
         dashboard.market_regime = (
-        MarketRegimeAnalytics.analyze(
-        futures=dashboard.futures,
-        breadth=dashboard.heatmap_summary,
-        sectors=dashboard.sector_strength,
-        volatility=dashboard.vix_analysis,
+            MarketRegimeAnalytics.analyze(
+                futures=dashboard.futures,
+                breadth=dashboard.heatmap_summary,
+                sectors=dashboard.sector_strength,
+                volatility=dashboard.vix_analysis,
             )
         )
-        
+
+        # -----------------------------
+        # Future + individual-stock trade plans
+        # -----------------------------
+        dashboard.future_trade_plan = TradePlanner.build_future_plan(
+            dashboard.futures,
+            dashboard.market.option_chain,
+        )
+
+        if dashboard.heatmap:
+            movers = sorted(dashboard.heatmap, key=lambda x: x.change_pct, reverse=True)
+            if dashboard.market_regime.regime_score >= 20:
+                candidate = movers[0] if movers else None
+                direction = "BULLISH"
+            elif dashboard.market_regime.regime_score <= -20:
+                candidate = movers[-1] if movers else None
+                direction = "BEARISH"
+            else:
+                candidate = None
+                direction = "NEUTRAL"
+
+            stock_chain = []
+            if candidate is not None and direction != "NEUTRAL":
+                try:
+                    stock_expiries = self.provider.get_expiries(
+                        exchange=exchange,
+                        underlying_symbol=candidate.symbol,
+                    )
+                    if stock_expiries:
+                        stock_expiry = stock_expiries[0]
+                        stock_chain = self.provider.get_option_chain(
+                            exchange=exchange,
+                            symbol=candidate.symbol,
+                            expiry=stock_expiry,
+                        )
+                except Exception:
+                    stock_chain = []
+                dashboard.stock_trade_plan = TradePlanner.build_stock_plan(
+                    candidate, direction, stock_chain
+                )
+
         # -----------------------------
         # AI
         # -----------------------------

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -51,6 +52,25 @@ class AIService:
             premium_analysis=dashboard.premium_analysis,
             current_time=datetime.now(IST),
         )
+
+        # Preserve the exact CE/PE identity selected from the normalized chain.
+        # A missing trading symbol or lot size remains invalid for paper ordering.
+        selected_option = next(
+            (option for option in dashboard.market.option_chain
+             if option.strike_price == recommendation.strike_price),
+            None,
+        )
+        if selected_option is not None and recommendation.option_type in {"CE", "PE"}:
+            is_call = recommendation.option_type == "CE"
+            lot_size = selected_option.call_lot_size if is_call else selected_option.put_lot_size
+            recommendation = replace(
+                recommendation,
+                underlying_symbol=dashboard.market.symbol,
+                exchange=dashboard.market.exchange,
+                trading_symbol=(selected_option.call_trading_symbol if is_call else selected_option.put_trading_symbol),
+                lot_size=int(lot_size),
+                quantity=int(lot_size),
+            )
 
         option_type = recommendation.option_type or "NONE"
         if recommendation.action == "BUY CALL":

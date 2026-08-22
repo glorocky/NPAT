@@ -73,6 +73,13 @@ class PaperBroker:
         stop_loss: float = 0.0,
         target: float = 0.0,
         source: TradeSource = TradeSource.AI,
+        underlying_symbol: str = "",
+        exchange: str = "NSE",
+        expiry: str = "",
+        strike_price: int = 0,
+        option_type: str = "",
+        trading_symbol: str = "",
+        lot_size: int = 0,
     ) -> PaperTrade:
         """
         Create and save a paper trade.
@@ -80,6 +87,13 @@ class PaperBroker:
 
         trade = PaperTrade(
             symbol=symbol,
+            exchange=exchange,
+            underlying_symbol=underlying_symbol,
+            expiry=expiry,
+            strike_price=strike_price,
+            option_type=option_type,
+            trading_symbol=trading_symbol,
+            lot_size=lot_size,
             side=side,
             quantity=quantity,
             entry_price=price,

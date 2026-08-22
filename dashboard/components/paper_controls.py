@@ -15,6 +15,7 @@ from services.paper_trading_service import (
 
 def render(
     service: PaperTradingService,
+    recommendation=None,
 ) -> None:
     """
     Render manual paper trading controls.
@@ -22,6 +23,32 @@ def render(
 
 
     st.subheader("🎮 Paper Trading Controls")
+
+    if recommendation is not None and recommendation.action in {"BUY CALL", "BUY PUT"}:
+        st.markdown("### AI Option Paper-Order Preview")
+        option_quantity = st.number_input("Option quantity", min_value=1,
+            value=max(1, int(recommendation.quantity or recommendation.lot_size or 1)), step=1,
+            key="ai_option_quantity")
+        preview_left, preview_right = st.columns(2)
+        with preview_left:
+            option_stop = st.number_input("Option stop loss", min_value=0.0, value=0.0, step=0.05,
+                                          key="ai_option_stop")
+        with preview_right:
+            option_target = st.number_input("Option target", min_value=0.0, value=0.0, step=0.05,
+                                            key="ai_option_target")
+        try:
+            preview = service.preview_option_order(recommendation, quantity=int(option_quantity),
+                stop_loss=float(option_stop), target=float(option_target))
+            st.markdown(f"`{preview.exchange}:{preview.trading_symbol}` | {preview.underlying_symbol} | "
+                f"Expiry {preview.expiry} | Strike {preview.strike_price} {preview.option_type} | "
+                f"Entry ₹{preview.entry_price:.2f} | Qty {preview.quantity} ({preview.lot_size}/lot) | "
+                f"SL ₹{preview.stop_loss:.2f} | Target ₹{preview.target:.2f} | R:R {preview.risk_reward:.2f}")
+            confirmed = st.checkbox("I confirm this paper order", key="ai_option_confirm")
+            if st.button("Create confirmed option paper order", key="ai_option_submit", width="stretch"):
+                trade = service.confirm_option_order(preview, confirmed=confirmed)
+                st.success(f"Option paper order opened: {trade.trading_symbol} × {trade.quantity}")
+        except (ValueError, PermissionError, RuntimeError) as exc:
+            st.info(f"AI option order preview unavailable: {exc}")
 
     col1, col2, col3, col4 = st.columns(4)
 

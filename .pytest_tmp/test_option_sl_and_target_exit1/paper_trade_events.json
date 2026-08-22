@@ -1,0 +1,14 @@
+[
+    {
+        "trade_id": "b2017fc9-a893-49d4-9751-abba18073ec9",
+        "timestamp": "2026-08-21 19:59:25.588392+00:00",
+        "event": "OPTION_PAPER_ORDER_OPENED",
+        "description": "Confirmed CE NIFTY26AUG25000CE @ 100.00, quantity 25."
+    },
+    {
+        "trade_id": "b2017fc9-a893-49d4-9751-abba18073ec9",
+        "timestamp": "2026-08-21 19:59:25.592322+00:00",
+        "event": "TRADE_CLOSED",
+        "description": "Trade closed at \u20b9140.00. Reason: TARGET. Realized P&L: \u20b91,000.00."
+    }
+]

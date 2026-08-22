@@ -920,6 +920,8 @@ class GrowwProvider(BaseProvider):
                     call_ltp=float(
                         call_data.get("ltp") or 0.0
                     ),
+                    call_trading_symbol=str(call_data.get("trading_symbol") or call_data.get("symbol") or ""),
+                    call_lot_size=int(call_data.get("lot_size") or 0),
 
                     # PUT
                     put_oi=int(
@@ -935,6 +937,8 @@ class GrowwProvider(BaseProvider):
                     put_ltp=float(
                         put_data.get("ltp") or 0.0
                     ),
+                    put_trading_symbol=str(put_data.get("trading_symbol") or put_data.get("symbol") or ""),
+                    put_lot_size=int(put_data.get("lot_size") or 0),
                 )
 
             except (TypeError, ValueError) as ex:

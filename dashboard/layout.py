@@ -66,6 +66,7 @@ from dashboard.components.paper_history import (
 from dashboard.components.paper_controls import (
     render as render_paper_controls,
 )
+from dashboard.components.trade_plans import render as render_trade_plans
 
 from services.paper_trading_service import (
     PaperTradingService,
@@ -107,6 +108,11 @@ def render(
     # -------------------------------------------------
 
     render_ai_panel(snapshot)
+
+    # -------------------------------------------------
+    # AI Future / Stock + Hedge Plans
+    # -------------------------------------------------
+    render_trade_plans(snapshot)
     
     # -------------------------------------------------
     # Paper Trading Controls
@@ -120,6 +126,7 @@ def render(
 
         render_paper_controls(
             paper_service,
+            snapshot.ai.recommendation if snapshot.ai else None,
         )
     
     # -------------------------------------------------

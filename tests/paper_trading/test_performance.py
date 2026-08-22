@@ -6,12 +6,17 @@ from paper_trading.performance import (
     PerformanceEngine,
 )
 
+from paper_trading.enums import (
+    TradeStatus,
+)
+
+
 def test_total_trades():
 
     trades = [
-        PaperTrade(),
-        PaperTrade(),
-        PaperTrade(),
+        PaperTrade(status=TradeStatus.CLOSED),
+        PaperTrade(status=TradeStatus.CLOSED),
+        PaperTrade(status=TradeStatus.CLOSED),
     ]
 
     assert (
@@ -20,13 +25,23 @@ def test_total_trades():
         )
         == 3
     )
-    
+
+
 def test_winning_trades():
 
     trades = [
-        PaperTrade(realized_pnl=100),
-        PaperTrade(realized_pnl=-50),
-        PaperTrade(realized_pnl=25),
+        PaperTrade(
+            status=TradeStatus.CLOSED,
+            realized_pnl=100,
+        ),
+        PaperTrade(
+            status=TradeStatus.CLOSED,
+            realized_pnl=-50,
+        ),
+        PaperTrade(
+            status=TradeStatus.CLOSED,
+            realized_pnl=25,
+        ),
     ]
 
     assert (
@@ -35,12 +50,23 @@ def test_winning_trades():
         )
         == 2
     )
+
+
 def test_losing_trades():
 
     trades = [
-        PaperTrade(realized_pnl=100),
-        PaperTrade(realized_pnl=-50),
-        PaperTrade(realized_pnl=-20),
+        PaperTrade(
+            status=TradeStatus.CLOSED,
+            realized_pnl=100,
+        ),
+        PaperTrade(
+            status=TradeStatus.CLOSED,
+            realized_pnl=-50,
+        ),
+        PaperTrade(
+            status=TradeStatus.CLOSED,
+            realized_pnl=-20,
+        ),
     ]
 
     assert (
@@ -50,11 +76,18 @@ def test_losing_trades():
         == 2
     )
 
+
 def test_win_rate():
 
     trades = [
-        PaperTrade(realized_pnl=100),
-        PaperTrade(realized_pnl=-50),
+        PaperTrade(
+            status=TradeStatus.CLOSED,
+            realized_pnl=100,
+        ),
+        PaperTrade(
+            status=TradeStatus.CLOSED,
+            realized_pnl=-50,
+        ),
     ]
 
     assert (
@@ -63,11 +96,19 @@ def test_win_rate():
         )
         == 50.0
     )
+
+
 def test_statistics():
 
     trades = [
-        PaperTrade(realized_pnl=100),
-        PaperTrade(realized_pnl=-50),
+        PaperTrade(
+            status=TradeStatus.CLOSED,
+            realized_pnl=100,
+        ),
+        PaperTrade(
+            status=TradeStatus.CLOSED,
+            realized_pnl=-50,
+        ),
     ]
 
     stats = (
@@ -77,7 +118,5 @@ def test_statistics():
     )
 
     assert stats.total_trades == 2
-
     assert stats.winning_trades == 1
-
     assert stats.losing_trades == 1

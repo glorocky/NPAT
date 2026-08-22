@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from strategies.trade_planner import TradePlan
 from core.models import (
     AIAnalysis,
     ForwardPremiumAnalysis,
@@ -112,3 +113,7 @@ class DashboardSnapshot:
     # =====================================================
 
     participant_data: object | None = None
+
+    # AI trade plans: index future + individual-stock candidate + hedge.
+    future_trade_plan: TradePlan | None = None
+    stock_trade_plan: TradePlan | None = None

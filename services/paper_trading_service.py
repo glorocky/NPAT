@@ -35,6 +35,7 @@ from config import (
 )
 from paper_trading.models import (
     DashboardSummary,
+    OptionPaperOrderPreview,
     TradeEvent,
 )
 
@@ -60,7 +61,7 @@ class PaperTradingService:
         self.max_daily_loss = float(
         PAPER_TRADING_MAX_DAILY_LOSS
         )
-        
+
         self.max_open_trades = int(
         PAPER_TRADING_MAX_OPEN_TRADES
         )
@@ -414,6 +415,87 @@ class PaperTradingService:
     )
 
         return trade
+
+    # =========================================================
+    # AI Option Paper Orders
+    # =========================================================
+
+    @staticmethod
+    def _validate_option_recommendation(recommendation, quantity: int) -> None:
+        required_text = {
+            "underlying symbol": recommendation.underlying_symbol,
+            "exchange": recommendation.exchange,
+            "expiry": recommendation.expiry,
+            "option type": recommendation.option_type,
+            "trading symbol": recommendation.trading_symbol,
+        }
+        missing = [name for name, value in required_text.items() if not str(value).strip()]
+        if missing:
+            raise ValueError("Option recommendation is missing " + ", ".join(missing) + ".")
+        if recommendation.option_type not in {"CE", "PE"}:
+            raise ValueError("Option recommendation type must be CE or PE.")
+        if recommendation.action not in {"BUY CALL", "BUY PUT"}:
+            raise ValueError("Option recommendation is not a buyable option trade.")
+        if recommendation.entry_price <= 0 or recommendation.strike_price <= 0:
+            raise ValueError("Option recommendation has an invalid entry price or strike.")
+        if recommendation.lot_size <= 0:
+            raise ValueError("Option recommendation has an invalid lot size.")
+        if quantity <= 0 or quantity % recommendation.lot_size:
+            raise ValueError("Option quantity must be a positive multiple of the lot size.")
+
+    def preview_option_order(self, recommendation, *, quantity: int | None = None,
+                             stop_loss: float = 0.0, target: float = 0.0) -> OptionPaperOrderPreview:
+        """Build a non-executable paper order preview from an AI recommendation."""
+        order_quantity = int(recommendation.quantity if quantity is None else quantity)
+        self._validate_option_recommendation(recommendation, order_quantity)
+        entry = float(recommendation.entry_price)
+        if stop_loss <= 0 or target <= 0 or stop_loss >= entry or target <= entry:
+            raise ValueError("Option stop loss must be below entry and target must be above entry.")
+        risk_reward = (target - entry) / (entry - stop_loss)
+        return OptionPaperOrderPreview(
+            underlying_symbol=recommendation.underlying_symbol,
+            exchange=recommendation.exchange,
+            expiry=recommendation.expiry,
+            strike_price=int(recommendation.strike_price),
+            option_type=recommendation.option_type,
+            trading_symbol=recommendation.trading_symbol,
+            entry_price=entry,
+            lot_size=int(recommendation.lot_size),
+            quantity=order_quantity,
+            stop_loss=float(stop_loss),
+            target=float(target),
+            risk_reward=risk_reward,
+        )
+
+    def confirm_option_order(self, preview: OptionPaperOrderPreview, *, confirmed: bool) -> object:
+        """Create an AI option paper order only after explicit user confirmation."""
+        if not confirmed:
+            raise PermissionError("Explicit manual confirmation is required for a paper option order.")
+        self._check_daily_loss_limit()
+        self._check_max_open_trades()
+        self._check_capital_exposure(preview.entry_price, preview.quantity)
+        trade = self.trade_manager.open_trade(
+            symbol=preview.underlying_symbol,
+            side=TradeSide.BUY,
+            quantity=preview.quantity,
+            price=preview.entry_price,
+            stop_loss=preview.stop_loss,
+            target=preview.target,
+            source=TradeSource.AI,
+            underlying_symbol=preview.underlying_symbol,
+            exchange=preview.exchange,
+            expiry=preview.expiry,
+            strike_price=preview.strike_price,
+            option_type=preview.option_type,
+            trading_symbol=preview.trading_symbol,
+            lot_size=preview.lot_size,
+        )
+        self._record_event(
+            trade.trade_id,
+            "OPTION_PAPER_ORDER_OPENED",
+            f"Confirmed {preview.option_type} {preview.trading_symbol} @ {preview.entry_price:,.2f}, quantity {preview.quantity}.",
+        )
+        return trade
         
     # =========================================================
     # Update Market Price
@@ -456,8 +538,9 @@ class PaperTradingService:
         for trade in open_trades:
 
             quote = quote_provider(
-                symbol=trade.symbol,
+                symbol=trade.trading_symbol or trade.symbol,
                 exchange=trade.exchange,
+                segment="FNO" if trade.trading_symbol else "CASH",
             )
 
             updated_trade = self.update_market_price(
@@ -526,7 +609,6 @@ class PaperTradingService:
         """
         Close an existing paper trade.
         """
-
         return self.trade_manager.close_trade(
             trade_id=trade_id,
             price=price,
@@ -537,4 +619,3 @@ class PaperTradingService:
         "Max Drawdown",
         f"₹ {statistics.max_drawdown:,.2f}",
         )
-            

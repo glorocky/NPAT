@@ -41,9 +41,10 @@ def render_live_dashboard() -> None:
     )
 
     paper_service.update_open_market_prices(
-        lambda symbol, exchange: service.get_quote(
+        lambda symbol, exchange, segment="CASH": service.get_quote(
             symbol=symbol,
             exchange=exchange,
+            segment=segment,
         )
     )
 

@@ -236,6 +236,9 @@ class OptionData:
 
     call_ltp: float = 0.0
 
+    call_trading_symbol: str = ""
+    call_lot_size: int = 0
+
     # -----------------------------
     # Put Side
     # -----------------------------
@@ -249,6 +252,9 @@ class OptionData:
     put_iv: float = 0.0
 
     put_ltp: float = 0.0
+
+    put_trading_symbol: str = ""
+    put_lot_size: int = 0
 
 
 # =========================================================
@@ -1078,6 +1084,14 @@ class OptionTradeRecommendation:
     signal: str
 
     reason: str
+
+    # Exact option contract identity. Empty values indicate unavailable
+    # provider metadata and must not be submitted as a paper option order.
+    underlying_symbol: str = ""
+    exchange: str = "NSE"
+    trading_symbol: str = ""
+    lot_size: int = 0
+    quantity: int = 0
     
 # =========================================================
 # AIService

@@ -1,0 +1,8 @@
+[
+    {
+        "trade_id": "e01c69fc-be51-4d49-97cb-61c3962cce2e",
+        "timestamp": "2026-08-21 19:59:25.516483+00:00",
+        "event": "OPTION_PAPER_ORDER_OPENED",
+        "description": "Confirmed PE NIFTY26AUG25000PE @ 100.00, quantity 25."
+    }
+]

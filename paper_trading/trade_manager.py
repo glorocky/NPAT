@@ -72,6 +72,7 @@ class TradeManager:
         stop_loss: float = 0.0,
         target: float = 0.0,
         source: TradeSource = TradeSource.AI,
+        **contract_identity,
     ) -> PaperTrade:
         """
         Open a new paper trade.
@@ -85,6 +86,7 @@ class TradeManager:
             stop_loss=stop_loss,
             target=target,
             source=source,
+            **contract_identity,
         )
         
     # =====================================================

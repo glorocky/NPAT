@@ -21,7 +21,7 @@ class OptionSelector:
         )
 
     @classmethod
-    def select(cls, *, symbol: str, expiry: str, spot_price: float, atm_strike: int,
+    def _select(cls, *, symbol: str, expiry: str, spot_price: float, atm_strike: int,
                options: list[OptionData], signal: str, confidence: float,
                premium_analysis=None, current_time: datetime | None = None) -> OptionTradeRecommendation:
         normalized_signal = signal.upper().strip()
@@ -64,3 +64,31 @@ class OptionSelector:
             confidence=float(confidence), signal=normalized_signal,
             reason=(f"AI signal is {normalized_signal}; validated ATM {atm_strike} "
                     f"{'CALL' if option_type == 'CE' else 'PUT'} is selected.{expiry_note}"))
+
+    @classmethod
+    def select(cls, **kwargs) -> OptionTradeRecommendation:
+        """Select a contract and retain CE/PE quote identity from the chain."""
+        recommendation = cls._select(**kwargs)
+        option_type = recommendation.option_type
+        if option_type not in {"CE", "PE"}:
+            return recommendation
+        selected = next(
+            (option for option in kwargs["options"]
+             if option.strike_price == recommendation.strike_price),
+            None,
+        )
+        if selected is None:
+            return recommendation
+        if option_type == "CE":
+            trading_symbol, lot_size = selected.call_trading_symbol, selected.call_lot_size
+        else:
+            trading_symbol, lot_size = selected.put_trading_symbol, selected.put_lot_size
+        return OptionTradeRecommendation(
+            action=recommendation.action, option_type=option_type,
+            symbol=recommendation.symbol, expiry=recommendation.expiry,
+            strike_price=recommendation.strike_price, entry_price=recommendation.entry_price,
+            spot_price=recommendation.spot_price, confidence=recommendation.confidence,
+            signal=recommendation.signal, reason=recommendation.reason,
+            underlying_symbol=recommendation.symbol, exchange="NSE",
+            trading_symbol=trading_symbol, lot_size=int(lot_size), quantity=int(lot_size),
+        )
