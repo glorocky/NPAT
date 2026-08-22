@@ -498,6 +498,83 @@ class PaperTradingService:
         return trade
         
     # =========================================================
+    # AI Auto Paper Execution
+    # =========================================================
+
+    def auto_execute_ai(self, ai_result, *, decision_key: str) -> dict:
+        """
+        Automatically open an AI paper option trade once for a given
+        decision key.  This is paper-trading only; no live broker order
+        is placed.
+
+        The method accepts the AI result object used by the dashboard/tests
+        (``recommendation``, ``signal``, ``confidence`` and ``reasons``).
+        A decision key prevents the same AI decision from opening duplicate
+        paper positions during repeated dashboard refreshes.
+        """
+        if not hasattr(self, "_ai_processed_decisions"):
+            self._ai_processed_decisions: set[str] = set()
+
+        key = str(decision_key or "").strip()
+        if not key:
+            raise ValueError("AI decision_key is required.")
+
+        if key in self._ai_processed_decisions:
+            return {"status": "ALREADY_PROCESSED"}
+
+        recommendation = getattr(ai_result, "recommendation", None)
+        action = str(getattr(recommendation, "action", "")).strip().upper()
+
+        if action == "NO TRADE":
+            self._ai_processed_decisions.add(key)
+            return {"status": "NO_TRADE"}
+
+        # Only the existing AI option recommendations are eligible for
+        # automatic paper execution.  Manual/live execution is untouched.
+        quantity = int(getattr(recommendation, "quantity", 0) or 0)
+        self._validate_option_recommendation(recommendation, quantity)
+
+        self._check_daily_loss_limit()
+        self._check_max_open_trades()
+
+        entry = float(recommendation.entry_price)
+        # Default AI-paper risk profile used by Sprint 12 tests/planner:
+        # 20% protective stop and 35% upside target from option entry.
+        stop_loss = round(entry * 0.80, 10)
+        target = round(entry * 1.35, 10)
+        self._check_capital_exposure(entry, quantity)
+
+        trade = self.trade_manager.open_trade(
+            symbol=recommendation.underlying_symbol,
+            side=TradeSide.BUY,
+            quantity=quantity,
+            price=entry,
+            stop_loss=stop_loss,
+            target=target,
+            source=TradeSource.AI,
+            underlying_symbol=recommendation.underlying_symbol,
+            exchange=recommendation.exchange,
+            expiry=recommendation.expiry,
+            strike_price=int(recommendation.strike_price),
+            option_type=recommendation.option_type,
+            trading_symbol=recommendation.trading_symbol,
+            lot_size=int(recommendation.lot_size),
+        )
+
+        self._ai_processed_decisions.add(key)
+        self._record_event(
+            trade.trade_id,
+            "AI_AUTO_PAPER_OPENED",
+            (
+                f"AI {recommendation.action} opened {recommendation.trading_symbol} "
+                f"@ {entry:,.2f}, quantity {quantity}, "
+                f"confidence {float(getattr(ai_result, 'confidence', 0.0)):,.1f}%."
+            ),
+        )
+
+        return {"status": "OPENED", "trade": trade}
+
+    # =========================================================
     # Update Market Price
     # =========================================================
 
